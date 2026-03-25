@@ -1,0 +1,15 @@
+.Rproj.user
+.Rhistory
+.Ruserdata
+.Rbuildignore
+
+.quarto/
+/.quarto/
+rsconnect/
+
+dev/
+analysis/dev_*
+
+app/data
+data/psi_data
+data/raw
