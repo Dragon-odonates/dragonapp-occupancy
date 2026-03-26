@@ -55,7 +55,7 @@ get_area_country <- function(
 #' Calculate the average occupancy per country and per time step
 #'
 #' @param grid a `terra::SpatVector` object with the grid
-#' @param dir_sp Directory with output of occupancy model (qs)
+#' @param sp_list List of species directories to read occupancy from
 #' @param country a `terra::SpatVector` object with the country definition
 #' @param digits integer indicating the number of decimal places to be kept.
 #' @returns A `data.frame` with the grid_id in rows and country in columns
@@ -64,7 +64,7 @@ get_area_country <- function(
 #'
 get_ts_country <- function(
   grid,
-  dir_sp,
+  sp_list,
   country = dragon_country(),
   digits = 5
 ) {
@@ -82,14 +82,7 @@ get_ts_country <- function(
   stopifnot("`grid_id` must be in `grid`." = {
     "grid_id" %in% names(grid)
   })
-  sp_list <- list.dirs(dir_sp, recursive = FALSE, full.names = FALSE)
-  sp_files <- list.files(dir_sp, recursive = TRUE)
-  check_psi <- file.path(sp_list, paste0("psi_", sp_list, ".qs"))
-  stopifnot(
-    "All species must have a psi_genus_species.qs file" = {
-      all(check_psi %in% sp_files)
-    }
-  )
+
   if ("sf" %in% class(country)) {
     country <- terra::vect(country)
   }
@@ -102,9 +95,10 @@ get_ts_country <- function(
   area_country <- get_area_country(grid, country)
   # Make a large
   tsout <- list()
-  for (i in sp_list) {
+  for (dir_i in sp_list) {
+    i <- basename(dir_i)
     # load psi data
-    psi_file <- file.path(dir_sp, i, paste0("psi_", i, ".qs"))
+    psi_file <- file.path(dir_i, paste0("psi_", i, ".qs"))
     dfi <- qs2::qs_read(psi_file)
     # rapid check
     msg <- paste0(

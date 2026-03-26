@@ -1,28 +1,21 @@
 #' Merge the phenological data per day
 #'
-#' @param dir_sp Directory with output of occupancy model (qs)
+#' @param sp_list List of species directories to read occupancy from
 #' @param digits integer indicating the number of decimal places to be kept.
 #' @returns A `data.frame` with the grid_id in rows and country in columns
 #'
 #' @export
 #'
 get_pheno <- function(
-  dir_sp,
+  sp_list,
   digits = 5
 ) {
-  sp_list <- list.dirs(dir_sp, recursive = FALSE, full.names = FALSE)
-  sp_files <- list.files(dir_sp, recursive = TRUE)
-  check_pheno <- file.path(sp_list, paste0("pheno_", sp_list, ".qs"))
-  stopifnot(
-    "All species must have a psi_genus_species.qs file" = {
-      all(check_pheno %in% sp_files)
-    }
-  )
+
   tsout <- list()
-  for (i in sp_list) {
+  for (dir_i in sp_list) {
+    i <- basename(dir_i)
     # load pheno data
-    psi_file <- file.path(dir_sp, i, paste0("pheno_", i, ".qs"))
-    dfi <- qs2::qs_read(psi_file)
+    dfi <- qs2::qs_read(file.path(dir_i, paste0("pheno_", i, ".qs")))
     # format it
     out <- data.frame(
       "doy" = dfi$doy,
