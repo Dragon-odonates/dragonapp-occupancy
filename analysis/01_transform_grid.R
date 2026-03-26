@@ -7,17 +7,25 @@
 # output: "grid.gpkg"
 
 # Parameters to be updated ---------------------
-data_folder <- here::here("data")
-eea_grid <- here::here("data", "raw", "grid_20km_surf.gpkg")
-output <- file.path(data_folder, "grid.gpkg")
+sub <- "Europe"
+scale <- 20000
+model <- "18_occ_yearenvsitetime_envquadra_fac_site_time_von_mises_ll_missing_binom_7d"
+data_folder <- file.path("/media/seagate/lnicvert/dragonocc/outputs/02_occupancy_stan/02_real", 
+                         sub, scale, model)
+
+eea_grid <- file.path("/home/lnicvert/code/dragonocc/outputs/01_prepare_data/02_real", 
+                      sub, scale, 
+                      "grid.gpkg")
+
+out_folder <- here::here("data")
+output <- file.path(out_folder, "grid.gpkg")
 # ----------------------------------------------
 
 # Load the grid
 grid <- terra::vect(eea_grid)
 
 # Simplify and rename the attributes
-grid <- grid[, "GRD_ID"]
-names(grid) <- "grid_id"
+grid <- grid[, "grid_id"]
 
 # Load the data file
 psi_file <- list.files(
