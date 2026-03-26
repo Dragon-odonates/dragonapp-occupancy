@@ -10,7 +10,7 @@ fluidPage(
                      "Distribution",
                      fluidRow(
                             column(
-                                   4,
+                                   6,
                                    selectInput(
                                           "spe",
                                           "Species:",
@@ -21,7 +21,7 @@ fluidPage(
                                    br()
                             ),
                             column(
-                                   4,
+                                   3,
                                    selectInput(
                                           "map",
                                           "Map:",
@@ -31,7 +31,7 @@ fluidPage(
                                    )
                             ),
                             column(
-                                   4,
+                                   3,
                                    conditionalPanel(
                                           'input.map === "dynamic"',
                                           uiOutput('inYear')

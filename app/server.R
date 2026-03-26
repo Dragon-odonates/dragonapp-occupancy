@@ -78,15 +78,15 @@ function(input, output, session) {
     return(sph)
   })
 
-  sub_env <- reactive({
+  sub_coef <- reactive({
     req(input$spe)
     # if statement to avoid issue when changing dataset
-    if (input$spe %in% env$species) {
-      senv <- env[env$species == input$spe, ]
+    if (input$spe %in% pcoef$species) {
+      scoef <- pcoef[pcoef$species == input$spe, ]
     } else {
-      senv <- env[env$species == sort(env$species)[1], ]
+      scoef <- pcoef[pcoef$species == sort(pcoef$species)[1], ]
     }
-    return(senv)
+    return(scoef)
   })
 
   # Maps --------------------------------------------------------------------
@@ -134,8 +134,6 @@ function(input, output, session) {
   output$countryts <- renderPlotly({
     req(input$year)
     dts <- sub_ts()
-    # remove psi_time
-    dts <- dts[dts$country != "psi_time", ]
     num_countries <- length(unique(dts$country)) - 1
     pal <- colorRampPalette(RColorBrewer::brewer.pal(8, "Set2"))(num_countries)
 
@@ -179,29 +177,58 @@ function(input, output, session) {
   # Psi_time  ------------------------------------------------------
   output$psits <- renderPlotly({
     req(input$year)
-    dts <- sub_ts()
+    scoef <- sub_coef()
+    scoef <- scoef[nchar(scoef$var) == 4, ]
 
-    dpsi <- dts[dts$country == "psi_time", ]
+    scoef$popup <- paste0(
+      "<b>",
+      scoef$var,
+      "</b> <br>median: ",
+      scoef$median,
+      "<br>CI: [",
+      scoef$qmin,
+      ":",
+      scoef$qmax,
+      "]"
+    )
+
     plot_ly(
-      dpsi,
-      x = ~year,
-      y = ~mean,
-      type = "scatter",
-      mode = "lines+markers",
-      line = list(color = 'rgb(0,100,80)', width = 2),
-      marker = list(color = 'rgb(0,100,80)')
+      scoef,
+      x = ~var,
+      y = ~qmax,
+      type = 'scatter',
+      mode = 'lines',
+      line = list(color = 'transparent'),
+      showlegend = FALSE,
+      name = 'qmax',
+      hoverinfo = 'none'
     ) |>
+      add_trace(
+        x = ~var,
+        y = ~qmin,
+        type = 'scatter',
+        mode = 'lines',
+        fill = 'tonexty',
+        fillcolor = 'rgba(0,100,80,0.2)',
+        line = list(color = 'transparent'),
+        showlegend = FALSE,
+        name = 'qmin',
+        hoverinfo = 'none'
+      ) |>
+      add_trace(
+        x = ~var,
+        y = ~median,
+        type = 'scatter',
+        mode = 'lines',
+        line = list(color = 'rgb(0,100,80)'),
+        name = 'median',
+        text = ~popup,
+        hoverinfo = 'text'
+      ) |>
       layout(
         xaxis = list(title = 'Year'),
         yaxis = list(title = ''),
-        shapes = list(list(
-          type = "line",
-          x0 = input$year,
-          x1 = input$year,
-          y0 = min(dpsi$mean, na.rm = TRUE),
-          y1 = max(dpsi$mean, na.rm = TRUE),
-          line = list(color = "black")
-        ))
+        hovermode = "x unified"
       ) |>
       config(
         modeBarButtons = list(list("toImage")),
@@ -215,13 +242,16 @@ function(input, output, session) {
     sph <- sub_ph()
     sph$date <- as.Date(paste("2000", sph$doy), format = "%Y %j")
 
-    sph$popup <- paste(
-      "<b>median:</b>",
+    sph$popup <- paste0(
+      "<b>",
+      format(sph$date, "%d %b"),
+      "</b> <br>median: ",
       sph$median,
-      "<br>CI:",
+      "<br>CI: [",
       sph$qmin,
-      "-",
-      sph$qmax
+      ":",
+      sph$qmax,
+      "]"
     )
     plot_ly(
       sph,
@@ -275,22 +305,24 @@ function(input, output, session) {
   # Env. drivers  ------------------------------------------------------
   output$envplot <- renderPlotly({
     req(input$year)
-    senv <- sub_env()
-    senv$dmax <- senv$qmax - senv$median
-    senv$dmin <- senv$median - senv$qmin
-    senv$popup <- paste(
+    scoef <- sub_coef()
+    scoef <- scoef[nchar(scoef$var) > 4, ]
+    scoef$dmax <- scoef$qmax - scoef$median
+    scoef$dmin <- scoef$median - scoef$qmin
+    scoef$popup <- paste0(
       "<b>",
-      senv$env,
-      "</b><br>median:",
-      senv$median,
-      "<br>CI:",
-      senv$qmin,
-      "-",
-      senv$qmax
+      scoef$var,
+      "</b><br>median: ",
+      scoef$median,
+      "<br>CI: [",
+      scoef$qmin,
+      ":",
+      scoef$qmax,
+      "]"
     )
     plot_ly(
-      data = senv,
-      x = ~env,
+      data = scoef,
+      x = ~var,
       y = ~median,
       type = 'scatter',
       mode = 'markers',

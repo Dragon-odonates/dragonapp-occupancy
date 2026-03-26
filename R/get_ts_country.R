@@ -90,12 +90,6 @@ get_ts_country <- function(
       all(check_psi %in% sp_files)
     }
   )
-  check_psi_coef <- file.path(sp_list, paste0("psi_coef_", sp_list, ".qs"))
-  stopifnot(
-    "All species must have a psi_coef_genus_species.qs file" = {
-      all(check_psi_coef %in% sp_files)
-    }
-  )
   if ("sf" %in% class(country)) {
     country <- terra::vect(country)
   }
@@ -121,19 +115,6 @@ get_ts_country <- function(
       all(c("median", "grid_id", "year") %in% names(dfi))
     })
 
-    # load psi coef
-    coef_file <- file.path(dir_sp, i, paste0("psi_coef_", i, ".qs"))
-    dfi2 <- qs2::qs_read(coef_file)
-    # rapid check
-    msg <- paste0(
-      paste0("psi_coef_", i, ".qs"),
-      " must have large_variable `beta_psi_time`."
-    )
-    stopifnot(msg = {
-      "beta_psi_time" %in% dfi2$large_variable
-    })
-    psi_time <- dfi2[dfi2$large_variable == "beta_psi_time", ]
-
     for (y in sort(unique(dfi$year))) {
       dfy <- dfi[dfi$year == y, c("grid_id", "median")]
       med <- dfy$median[match(row.names(area_country), dfy$grid_id)]
@@ -148,19 +129,8 @@ get_ts_country <- function(
           stats::weighted.mean(med, area_country[, i], na.rm = TRUE)
         })
       )
-      # add psi_time
-      psi_y <- data.frame(
-        "species" = i,
-        "year" = y,
-        "country" = "psi_time",
-        "mean" = ifelse(
-          y %in% psi_time$variable_name,
-          psi_time$mean[psi_time$variable_name == y],
-          NA
-        )
-      )
 
-      tsout[[length(tsout) + 1]] <- rbind(outi, psi_y)
+      tsout[[length(tsout) + 1]] <- outi
     }
   }
   # merge into a data.frame

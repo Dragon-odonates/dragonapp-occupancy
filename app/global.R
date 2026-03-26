@@ -26,11 +26,9 @@ pt <- sf::st_cast(pt, "POLYGON", warn = FALSE)
 pt_df <- readRDS(file.path(folder, "grid_df.rds"))
 pt <- cbind(pt, pt_df[, -1])
 
-ph <- read.csv(file.path(folder, "ts_pheno.csv"))
+ph <- read.csv(file.path(folder, "pheno.csv"))
 
-env <- read.csv(file.path(folder, "psi_env.csv"))
-# sp_shape <- sort(unique(first_str(names(pt)[-1])))
-# yr_shape <- unique(last_str(names(pt)[-1]))
+pcoef <- read.csv(file.path(folder, "psi_coef.csv"))
 
 sp_choices <- sort(unique(df$species))
 

@@ -6,7 +6,7 @@
 #'
 #' @export
 #'
-get_env <- function(
+get_psi_coef <- function(
   dir_sp,
   digits = 5
 ) {
@@ -18,13 +18,26 @@ get_env <- function(
       all(check_psi_coef %in% sp_files)
     }
   )
-  envout <- list()
+  coef_out <- list()
   for (i in sp_list) {
     # load pheno data
     psi_file <- file.path(dir_sp, i, paste0("psi_coef_", i, ".qs"))
     dfi <- qs2::qs_read(psi_file)
+
+    # check that needed variables are present
+    needed_var <- c("beta_psi_env", "beta_psi_clc", "beta_psi_time")
+    msg <- paste0(
+      paste0("psi_coef_", i, ".qs"),
+      " must have large_variable: ",
+      paste0(needed_var, collapse = ", "),
+      "."
+    )
+    stopifnot(msg = {
+      all(needed_var %in% dfi$large_variable)
+    })
+    psi_time <- dfi[dfi$large_variable == "beta_psi_time", ]
     # format it
-    dfi <- dfi[dfi$large_variable %in% c("beta_psi_env", "beta_psi_clc"), ]
+    dfi <- dfi[dfi$large_variable %in% needed_var, ]
     dfi$variable_name <- ifelse(
       dfi$large_variable == "beta_psi_clc",
       paste0("clc_", dfi$variable_name),
@@ -32,15 +45,15 @@ get_env <- function(
     )
 
     out <- data.frame(
-      "env" = dfi$variable_name,
+      "var" = dfi$variable_name,
       "species" = i,
       "median" = round(dfi$median, digits),
       "qmin" = round(dfi$qmin, digits),
       "qmax" = round(dfi$qmax, digits)
     )
-    envout[[length(envout) + 1]] <- out
+    coef_out[[length(coef_out) + 1]] <- out
   }
   # merge into a data.frame
-  df <- do.call(rbind, envout)
+  df <- do.call(rbind, coef_out)
   return(df)
 }
