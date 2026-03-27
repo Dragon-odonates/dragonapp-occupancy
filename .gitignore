@@ -13,3 +13,7 @@ analysis/dev_*
 app/data
 data/psi_data
 data/raw
+
+data
+
+*.Rproj

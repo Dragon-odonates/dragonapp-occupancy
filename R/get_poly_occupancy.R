@@ -1,14 +1,15 @@
 #' Attach the occupancy outputs to the grid
 #'
 #' @param grid a `terra::SpatVector` object with the grid
-#' @param dir_sp directory with output of occupancy model (qs)
+#' @param sp_list List of species directories to read data from
 #' @param digits integer indicating the number of decimal places to be kept.
+#' @param verbose Print messages?
 #'
 #' @returns A `terra::SpatVector` with occupancy summarized per species
 #'
 #' @export
 #'
-get_poly_occupancy <- function(grid, dir_sp, digits = 5) {
+get_poly_occupancy <- function(grid, sp_list, digits = 5, verbose = TRUE) {
   # Checking the inputs ------------
   stopifnot("`grid` must be a `SpatVector`." = {
     "SpatVector" %in% class(grid)
@@ -19,34 +20,23 @@ get_poly_occupancy <- function(grid, dir_sp, digits = 5) {
   stopifnot("`grid_id` must be in `grid`." = {
     "grid_id" %in% names(grid)
   })
-  # Checking the occupancy files -------------------------
-  sp_list <- list.dirs(dir_sp, recursive = FALSE, full.names = FALSE)
-  sp_files <- list.files(dir_sp, recursive = TRUE)
-  # get psi file
-  check_psi <- file.path(sp_list, paste0("psi_", sp_list, ".qs"))
-  stopifnot(
-    "All species must have a psi_genus_species.qs file" = {
-      all(check_psi %in% sp_files)
-    }
-  )
-  # get psi file
-  check_psi_coef <- file.path(sp_list, paste0("psi_coef_", sp_list, ".qs"))
-  stopifnot(
-    "All species must have a psi_coef_genus_species.qs file" = {
-      all(check_psi_coef %in% sp_files)
-    }
-  )
+  
   # transform projection if not in EPSG:4326
   if (terra::crs(grid, proj = TRUE) != "+proj=longlat +datum=WGS84 +no_defs") {
     grid <- terra::project(grid, "EPSG:4326")
   }
-
+  
   # output
   gdout <- data.frame("grid_id" = grid$grid_id)
 
-  for (i in sp_list) {
+  for (dir_i in sp_list) {
+    i <- basename(dir_i)
+    
+    if (verbose) {
+      message("species ", i)
+    }
     # load psi data
-    psi_file <- file.path(dir_sp, i, paste0("psi_", i, ".qs"))
+    psi_file <- file.path(dir_i, paste0("psi_", i, ".qs"))
     df <- qs2::qs_read(psi_file)
     # rapid check
     msg <- paste0(
@@ -65,8 +55,9 @@ get_poly_occupancy <- function(grid, dir_sp, digits = 5) {
     # get characteristics
     average <- apply(wide, 1, mean)
     slope <- apply(wide, 1, get_slope)
+    
     # load psi coef
-    coef_file <- file.path(dir_sp, i, paste0("psi_coef_", i, ".qs"))
+    coef_file <- file.path(dir_i, paste0("psi_coef_", i, ".qs"))
     df2 <- qs2::qs_read(coef_file)
     # rapid check
     msg <- paste0(

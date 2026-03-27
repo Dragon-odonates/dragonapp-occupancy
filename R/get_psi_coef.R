@@ -1,28 +1,21 @@
 #' Merge the phenological data per day
 #'
-#' @param dir_sp Directory with output of occupancy model (qs)
+#' @param sp_list List of species directories to read occupancy from
 #' @param digits integer indicating the number of decimal places to be kept.
 #' @returns A `data.frame` with the grid_id in rows and country in columns
 #'
 #' @export
 #'
 get_psi_coef <- function(
-  dir_sp,
+  sp_list,
   digits = 5
 ) {
-  sp_list <- list.dirs(dir_sp, recursive = FALSE, full.names = FALSE)
-  sp_files <- list.files(dir_sp, recursive = TRUE)
-  check_psi_coef <- file.path(sp_list, paste0("psi_coef_", sp_list, ".qs"))
-  stopifnot(
-    "All species must have a psi_coef_genus_species.qs file" = {
-      all(check_psi_coef %in% sp_files)
-    }
-  )
+
   coef_out <- list()
-  for (i in sp_list) {
-    # load pheno data
-    psi_file <- file.path(dir_sp, i, paste0("psi_coef_", i, ".qs"))
-    dfi <- qs2::qs_read(psi_file)
+  for (dir_i in sp_list) {
+    i <- basename(dir_i)
+    # load psi_coef data
+    dfi <- qs2::qs_read(file.path(dir_i, paste0("psi_coef_", i, ".qs")))
 
     # check that needed variables are present
     needed_var <- c("beta_psi_env", "beta_psi_clc", "beta_psi_time")
