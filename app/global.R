@@ -40,4 +40,8 @@ Zmax <- 7
 Z <- 4
 
 # type of maps
-map_choices <- c("average", "slope", "beta_psi", "beta_psi_slope", "dynamic")
+map_choices <- c("mean occupancy" = "average", 
+                 "occupancy trend" = "slope", 
+                 "dynamic occupancy" = "dynamic",
+                 "site deviation (mean)" = "beta_psi", 
+                 "site deviation (trend)" = "beta_psi_slope")
