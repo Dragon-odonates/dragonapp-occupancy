@@ -63,7 +63,7 @@ fluidPage(
                                           full_screen = TRUE,
                                           nav_panel(
                                                  title = htmltools::span(
-                                                   "Country",
+                                                   "Trends",
                                                    htmltools::tags$div(
                                                      class = "mytooltip",
                                                      icon("circle-info"),

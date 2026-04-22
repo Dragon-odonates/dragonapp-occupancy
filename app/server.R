@@ -157,8 +157,9 @@ function(input, output, session) {
         marker = list(color = "black")
       ) |>
       layout(
-        xaxis = list(title = 'Year'),
-        yaxis = list(title = 'Average probability'),
+        xaxis = list(title = 'Year',
+                     tickvals = seq(2000, 2024, by = 4)),
+        yaxis = list(title = 'Mean occupancy probability'),
         shapes = list(list(
           type = "line",
           x0 = input$year,
@@ -179,6 +180,8 @@ function(input, output, session) {
     req(input$year)
     scoef <- sub_coef()
     scoef <- scoef[nchar(scoef$var) == 4, ]
+    scoef$dmax <- scoef$qmax - scoef$median
+    scoef$dmin <- scoef$median - scoef$qmin
 
     scoef$popup <- paste0(
       "<b>",
@@ -191,44 +194,32 @@ function(input, output, session) {
       scoef$qmax,
       "]"
     )
-
+    
     plot_ly(
-      scoef,
+      data = scoef,
       x = ~var,
-      y = ~qmax,
+      y = ~median,
       type = 'scatter',
-      mode = 'lines',
-      line = list(color = 'transparent'),
-      showlegend = FALSE,
-      name = 'qmax',
-      hoverinfo = 'none'
+      mode = 'markers',
+      marker = list(color = 'rgb(0,100,80)'),
+      text = ~popup,
+      hoverinfo = 'text',
+      error_y = list(
+        type = "data",
+        symmetric = FALSE,
+        array = ~dmax,
+        arrayminus = ~dmin,
+        color = 'rgb(0,100,80)'
+      )
     ) |>
       add_trace(
-        x = ~var,
-        y = ~qmin,
-        type = 'scatter',
-        mode = 'lines',
-        fill = 'tonexty',
-        fillcolor = 'rgba(0,100,80,0.2)',
-        line = list(color = 'transparent'),
-        showlegend = FALSE,
-        name = 'qmin',
-        hoverinfo = 'none'
-      ) |>
-      add_trace(
-        x = ~var,
-        y = ~median,
-        type = 'scatter',
-        mode = 'lines',
-        line = list(color = 'rgb(0,100,80)'),
-        name = 'median',
-        text = ~popup,
-        hoverinfo = 'text'
-      ) |>
+        type = "scatter", mode = "lines",
+        line = list(dash = "dash", color = 'rgb(0,100,80)'),
+        showlegend = FALSE
+      ) |> 
       layout(
-        xaxis = list(title = 'Year'),
-        yaxis = list(title = ''),
-        hovermode = "x unified"
+        xaxis = list(title = 'Variables'),
+        yaxis = list(title = '')
       ) |>
       config(
         modeBarButtons = list(list("toImage")),
