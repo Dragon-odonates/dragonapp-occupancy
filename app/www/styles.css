@@ -59,3 +59,8 @@
 .inline {
   display: inline-block !important;
 }
+
+/* Drop-down before map controls */
+.selectize-dropdown {
+  z-index: 10000;
+}
