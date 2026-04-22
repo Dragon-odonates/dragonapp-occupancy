@@ -31,6 +31,7 @@ ph <- read.csv(file.path(folder, "pheno.csv"))
 pcoef <- read.csv(file.path(folder, "psi_coef.csv"))
 
 sp_choices <- sort(unique(df$species))
+names(sp_choices) <- gsub("_", " ", sp_choices)
 
 yr_range <- sort(unique(df$year, na.rm = TRUE))
 
