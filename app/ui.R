@@ -6,7 +6,13 @@ fluidPage(
          ),
 
        # Application title
-       titlePanel("Distribution of odonates across Europe. DRAGON, FRB-CESAB"),
+       titlePanel(
+         tags$div(
+           htmltools::tags$img(src = "dragon_logo.png", height = "50px", style = "margin-right: 10px;"),
+           "Distribution of odonates across Europe",
+           htmltools::tags$span("DRAGON, FRB-CESAB", class = "subtitle")
+         )
+       ),
        tabsetPanel(
               id = 'main',
               tabPanel(

@@ -49,6 +49,12 @@
 
 /* Misc ------------------------------------------- */
 
+/* App subtitle */
+.subtitle {
+  color: darkgrey;
+  font-size: 20px !important;
+  font-style: italic;
+}
 
 /* Add padding in navcards for (i) */
 .nav > li > a {
