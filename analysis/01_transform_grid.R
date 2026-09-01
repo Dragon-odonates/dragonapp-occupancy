@@ -9,7 +9,7 @@
 # Parameters to be updated ---------------------
 sub <- "Europe"
 scale <- 20000
-model <- "18_occ_yearenvsitetime_envquadra_fac_site_time_von_mises_ll_missing_binom_7d"
+model <- "11-1_psi_fac_bioclim_quadra_clc_site_siteslope_p_von_mises_ll_spread_missing_binom_7d"
 data_folder <- file.path("/media/seagate/lnicvert/dragonocc/outputs/02_occupancy_stan/02_real", 
                          sub, scale, model)
 

@@ -47,11 +47,9 @@ fluidPage(
                                        class = "mytooltip",
                                        icon("circle-info"),
                                        htmltools::tags$p(class = "mytooltiptext",
-                                                         "mean occupancy: species mean occupancy in 2000-2024; 
-                                                          occupancy slope: linear slope of occupancy between 2000 and 2024; 
-                                                          dynamic occupancy: occupancy values for each year betweem 2000 and 2024 (choose); 
-                                                          site deviation (mean): deviation from the mean occupancy of similar sites; 
-                                                          site deviation (mean): deviation of sites from the global temporal trend" )
+                                                         "mean occupancy: species mean occupancy; 
+                                                          occupancy slope: mean yearly trend of occupancy (%); 
+                                                          dynamic occupancy: occupancy values for each year (choose)" )
                                        )
                                      )
                             ),
@@ -70,7 +68,7 @@ fluidPage(
                                           full_screen = TRUE,
                                           nav_panel(
                                                  title = htmltools::span(
-                                                   "Trends",
+                                                   "Temporal trends",
                                                    htmltools::tags$div(
                                                      class = "mytooltip",
                                                      icon("circle-info"),
@@ -85,48 +83,43 @@ fluidPage(
                                           ),
                                           nav_panel(
                                             title = htmltools::span(
-                                              "Phenology",
+                                              "Detection coefficients",
                                               htmltools::tags$div(
                                                 class = "mytooltip",
                                                 icon("circle-info"),
                                                 htmltools::tags$p(class = "mytooltiptext",
-                                                                  "Inferred phenology (variation in detection probability across the year)" )
-                                              )
-                                            ),
-                                                 plotly::plotlyOutput(
-                                                        'phenots',
-                                                        height = "600px"
-                                                 )
+                                                                  "Coefficients affecting species' detection probability")
+                                                
+                                                )
+                                              ),
+                                            fluidRow(
+                                              column(8,
+                                                     plotly::plotlyOutput(
+                                                       'phenots', # Inferred phenology (variation in detection probability across the year)
+                                                       height = "600px"
+                                                     )),
+                                              column(4,
+                                                     plotly::plotlyOutput(
+                                                       'pcoef', # Inferred phenology (variation in detection probability across the year)
+                                                       height = "600px"
+                                                     ))
+                                            )
                                           ),
                                           nav_panel(
                                             title = htmltools::span(
-                                              "Environmental variables",
+                                              "Occupancy coefficients",
                                               htmltools::tags$div(
                                                 class = "mytooltip",
                                                 icon("circle-info"),
                                                 htmltools::tags$p(class = "mytooltiptext",
-                                                                  "Estimated influence on occupancy (logit scale)" )
+                                                                  "Coefficients affecting species' probability of occurrence")
+                                                # Estimated influence on occupancy (logit scale)
                                               )
                                             ),
                                                  plotly::plotlyOutput(
                                                         'envplot',
                                                         height = "600px"
                                                  )
-                                          ),
-                                          nav_panel(
-                                            title = htmltools::span(
-                                              "Time coefficients",
-                                              htmltools::tags$div(
-                                                class = "mytooltip",
-                                                icon("circle-info"),
-                                                htmltools::tags$p(class = "mytooltiptext",
-                                                                  "Deviation from the mean occupancy for each year (logit scale)" )
-                                              )
-                                            ),
-                                            plotly::plotlyOutput(
-                                              'psits',
-                                              height = "600px"
-                                            )
                                           )
                                    )
                             ),

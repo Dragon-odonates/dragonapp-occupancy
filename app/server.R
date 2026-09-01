@@ -81,6 +81,17 @@ function(input, output, session) {
   sub_coef <- reactive({
     req(input$spe)
     # if statement to avoid issue when changing dataset
+    if (input$spe %in% psicoef$species) {
+      scoef <- psicoef[psicoef$species == input$spe, ]
+    } else {
+      scoef <- psicoef[psicoef$species == sort(psicoef$species)[1], ]
+    }
+    return(scoef)
+  })
+  
+  sub_p_coef <- reactive({
+    req(input$spe)
+    # if statement to avoid issue when changing dataset
     if (input$spe %in% pcoef$species) {
       scoef <- pcoef[pcoef$species == input$spe, ]
     } else {
@@ -175,59 +186,18 @@ function(input, output, session) {
       )
   })
 
-  # Psi_time  ------------------------------------------------------
-  output$psits <- renderPlotly({
+
+  # Detection ---------------------------------------------------------------
+  ## Coefficients -----
+  output$pcoef <- renderPlotly({
     req(input$year)
-    scoef <- sub_coef()
-    scoef <- scoef[nchar(scoef$var) == 4, ]
-    scoef$dmax <- scoef$qmax - scoef$median
-    scoef$dmin <- scoef$median - scoef$qmin
-
-    scoef$popup <- paste0(
-      "<b>",
-      scoef$var,
-      "</b> <br>median: ",
-      scoef$median,
-      "<br>CI: [",
-      scoef$qmin,
-      ":",
-      scoef$qmax,
-      "]"
-    )
+    scoef <- sub_p_coef()
+    # scoef <- scoef[nchar(scoef$var) > 4, ]
+    plot_ly_scatter(scoef)
     
-    plot_ly(
-      data = scoef,
-      x = ~var,
-      y = ~median,
-      type = 'scatter',
-      mode = 'markers',
-      marker = list(color = 'rgb(0,100,80)'),
-      text = ~popup,
-      hoverinfo = 'text',
-      error_y = list(
-        type = "data",
-        symmetric = FALSE,
-        array = ~dmax,
-        arrayminus = ~dmin,
-        color = 'rgb(0,100,80)'
-      )
-    ) |>
-      add_trace(
-        type = "scatter", mode = "lines",
-        line = list(dash = "dash", color = 'rgb(0,100,80)'),
-        showlegend = FALSE
-      ) |> 
-      layout(
-        xaxis = list(title = 'Variables'),
-        yaxis = list(title = '')
-      ) |>
-      config(
-        modeBarButtons = list(list("toImage")),
-        displaylogo = FALSE
-      )
   })
-
-  # Phenology  ------------------------------------------------------
+  
+  ## Phenology -----
   output$phenots <- renderPlotly({
     req(input$year)
     sph <- sub_ph()
@@ -297,44 +267,20 @@ function(input, output, session) {
   output$envplot <- renderPlotly({
     req(input$year)
     scoef <- sub_coef()
-    scoef <- scoef[nchar(scoef$var) > 4, ]
-    scoef$dmax <- scoef$qmax - scoef$median
-    scoef$dmin <- scoef$median - scoef$qmin
-    scoef$popup <- paste0(
-      "<b>",
-      scoef$var,
-      "</b><br>median: ",
-      scoef$median,
-      "<br>CI: [",
-      scoef$qmin,
-      ":",
-      scoef$qmax,
-      "]"
-    )
-    plot_ly(
-      data = scoef,
-      x = ~var,
-      y = ~median,
-      type = 'scatter',
-      mode = 'markers',
-      marker = list(color = 'rgb(0,100,80)'),
-      text = ~popup,
-      hoverinfo = 'text',
-      error_y = list(
-        type = "data",
-        symmetric = FALSE,
-        array = ~dmax,
-        arrayminus = ~dmin,
-        color = 'rgb(0,100,80)'
-      )
-    ) |>
-      layout(
-        xaxis = list(title = 'Variables'),
-        yaxis = list(title = '')
-      ) |>
-      config(
-        modeBarButtons = list(list("toImage")),
-        displaylogo = FALSE
-      )
-  })
-}
+    # scoef <- scoef[nchar(scoef$var) > 4, ]
+    lv <- unique(scoef$large_variable)
+    
+    plist <- vector(mode = "list", length = length(lv))
+    for (i in 1:length(lv)) {
+      pl <- plot_ly_scatter(scoef[scoef$large_variable == lv[i],]) |> 
+        layout(showlegend = FALSE)
+      if (lv[i] == "beta_psi_gsslope") {
+        pl <- pl |> 
+          layout(xaxis = list(showticklabels = FALSE))
+      }
+      plist[[i]] <- pl
+    }
+    plotly::subplot(plist,
+                    nrows = 2)
+    })
+  }

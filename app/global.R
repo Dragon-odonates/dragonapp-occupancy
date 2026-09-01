@@ -28,7 +28,9 @@ pt <- cbind(pt, pt_df[, -1])
 
 ph <- read.csv(file.path(folder, "pheno.csv"))
 
-pcoef <- read.csv(file.path(folder, "psi_coef.csv"))
+psicoef <- read.csv(file.path(folder, "psi_coef.csv"))
+
+pcoef <- read.csv(file.path(folder, "p_coef.csv"))
 
 sp_choices <- sort(unique(df$species))
 names(sp_choices) <- gsub("_", " ", sp_choices)
@@ -40,9 +42,7 @@ Zmin <- 2
 Zmax <- 7
 Z <- 4
 
-# type of maps
+
 map_choices <- c("mean occupancy" = "average", 
                  "occupancy trend" = "slope", 
-                 "dynamic occupancy" = "dynamic",
-                 "site deviation (mean)" = "beta_psi", 
-                 "site deviation (trend)" = "beta_psi_slope")
+                 "dynamic occupancy" = "dynamic")
