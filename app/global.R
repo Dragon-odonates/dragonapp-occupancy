@@ -29,6 +29,7 @@ pt <- cbind(pt, pt_df[, -1])
 ph <- read.csv(file.path(folder, "pheno.csv"))
 
 psicoef <- read.csv(file.path(folder, "psi_coef.csv"))
+psibio <- read.csv(file.path(folder, "psi_bioclim_curve.csv"))
 
 pcoef <- read.csv(file.path(folder, "p_coef.csv"))
 

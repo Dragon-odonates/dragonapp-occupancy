@@ -93,15 +93,15 @@ fluidPage(
                                                 )
                                               ),
                                             fluidRow(
-                                              column(8,
+                                              column(12,
                                                      plotly::plotlyOutput(
                                                        'phenots', # Inferred phenology (variation in detection probability across the year)
-                                                       height = "600px"
+                                                       height = "300px"
                                                      )),
-                                              column(4,
+                                              column(12,
                                                      plotly::plotlyOutput(
-                                                       'pcoef', # Inferred phenology (variation in detection probability across the year)
-                                                       height = "600px"
+                                                       'pcoef', # Other coefs for p
+                                                       height = "200px"
                                                      ))
                                             )
                                           ),
@@ -116,10 +116,18 @@ fluidPage(
                                                 # Estimated influence on occupancy (logit scale)
                                               )
                                             ),
-                                                 plotly::plotlyOutput(
-                                                        'envplot',
-                                                        height = "600px"
-                                                 )
+                                            fluidRow(
+                                              column(12,
+                                                     plotly::plotlyOutput(
+                                                       'psicoef_plot', # Other coefficients
+                                                       height = "400px"
+                                                     )),
+                                              column(12,
+                                                     plotly::plotlyOutput(
+                                                       'bioclim_plot', # Bioclimatic curves
+                                                       height = "200px"
+                                                     ))
+                                            )
                                           )
                                    )
                             ),

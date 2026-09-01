@@ -89,6 +89,17 @@ function(input, output, session) {
     return(scoef)
   })
   
+  sub_bio <- reactive({
+    req(input$spe)
+    # if statement to avoid issue when changing dataset
+    if (input$spe %in% psibio$species) {
+      sbio <- psibio[psibio$species == input$spe, ]
+    } else {
+      sbio <- psibio[psibio$species == sort(psibio$species)[1], ]
+    }
+    return(sbio)
+  })
+  
   sub_p_coef <- reactive({
     req(input$spe)
     # if statement to avoid issue when changing dataset
@@ -201,11 +212,11 @@ function(input, output, session) {
   output$phenots <- renderPlotly({
     req(input$year)
     sph <- sub_ph()
-    sph$date <- as.Date(paste("2000", sph$doy), format = "%Y %j")
+    sph$x <- as.Date(paste("2000", sph$doy), format = "%Y %j")
 
     sph$popup <- paste0(
       "<b>",
-      format(sph$date, "%d %b"),
+      format(sph$x, "%d %b"),
       "</b> <br>median: ",
       sph$median,
       "<br>CI: [",
@@ -214,39 +225,7 @@ function(input, output, session) {
       sph$qmax,
       "]"
     )
-    plot_ly(
-      sph,
-      x = ~date,
-      y = ~qmax,
-      type = 'scatter',
-      mode = 'lines',
-      line = list(color = 'transparent'),
-      showlegend = FALSE,
-      name = 'qmax',
-      hoverinfo = 'none'
-    ) |>
-      add_trace(
-        x = ~date,
-        y = ~qmin,
-        type = 'scatter',
-        mode = 'lines',
-        fill = 'tonexty',
-        fillcolor = 'rgba(0,100,80,0.2)',
-        line = list(color = 'transparent'),
-        showlegend = FALSE,
-        name = 'qmin',
-        hoverinfo = 'none'
-      ) |>
-      add_trace(
-        x = ~date,
-        y = ~median,
-        type = 'scatter',
-        mode = 'lines',
-        line = list(color = 'rgb(0,100,80)'),
-        name = 'median',
-        text = ~popup,
-        hoverinfo = 'text'
-      ) |>
+    plot_ly_lines(sph) |> 
       layout(
         xaxis = list(
           title = 'Date',
@@ -256,14 +235,12 @@ function(input, output, session) {
         ),
         yaxis = list(title = ''),
         hovermode = "x unified"
-      ) |>
-      config(
-        modeBarButtons = list(list("toImage")),
-        displaylogo = FALSE
       )
   })
 
-  # Env. drivers  ------------------------------------------------------
+
+  # Occupancy ---------------------------------------------------------------
+  ## Coefficients -----
   output$envplot <- renderPlotly({
     req(input$year)
     scoef <- sub_coef()
@@ -282,5 +259,44 @@ function(input, output, session) {
     }
     plotly::subplot(plist,
                     nrows = 2)
-    })
-  }
+  })
+  
+  ## Bioclim -----
+  output$psicoef_plot <- renderPlotly({
+    req(input$year)
+    scoef <- sub_coef()
+    # scoef <- scoef[nchar(scoef$var) > 4, ]
+    lv <- unique(scoef$large_variable)
+    
+    plist <- vector(mode = "list", length = length(lv))
+    for (i in 1:length(lv)) {
+      pl <- plot_ly_scatter(scoef[scoef$large_variable == lv[i],]) |> 
+        layout(showlegend = FALSE)
+      if (lv[i] == "beta_psi_gsslope") {
+        pl <- pl |> 
+          layout(xaxis = list(showticklabels = FALSE))
+      }
+      plist[[i]] <- pl
+    }
+    plotly::subplot(plist,
+                    nrows = 2)
+  })
+  
+  output$bioclim_plot <- renderPlotly({
+    req(input$year)
+    
+    sbio <- sub_bio()
+    
+    ubio <- unique(sbio$var)
+    plist <- vector(mode = "list", length = length(ubio))
+    for (i in 1:length(ubio)) {
+      pl <- plot_ly_lines(sbio[sbio$var == ubio[i],])
+      plist[[i]] <- pl
+    }
+    plotly::subplot(plist,
+                    nrows = 1)
+  })
+
+}
+
+
