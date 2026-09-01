@@ -9,7 +9,7 @@ suppressPackageStartupMessages({
   require(htmltools)
   require(markdown)
   require(shinycssloaders)
-  require(dragonapp)
+  require(dragonapp.occupancy)
 })
 
 folder <- "data"
