@@ -63,15 +63,19 @@ add_shiny_data <- function(
   utils::write.csv(df, file.path(dirdata, "ts_country.csv"), row.names = FALSE)
 
   if (verbose) {
-    message("get_pheno and get_psi_coef ------")
+    message("get_pheno and get_coef ------")
   }
   # Get phenological data
   pheno <- get_pheno(sp_list)
   utils::write.csv(pheno, file.path(dirdata, "pheno.csv"), row.names = FALSE)
 
   # Get environmental drivers data
-  env <- get_psi_coef(sp_list)
+  env <- get_coef("psi_coef_", sp_list)
   utils::write.csv(env, file.path(dirdata, "psi_coef.csv"), row.names = FALSE)
+  
+  # Get p coefs
+  p_coef <- get_coef("p_coef_", sp_list)
+  utils::write.csv(p_coef, file.path(dirdata, "p_coef.csv"), row.names = FALSE)
 
   invisible(list("pt" = gd, "ts" = df, "pheno" = pheno))
 }

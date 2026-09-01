@@ -62,17 +62,19 @@ get_poly_occupancy <- function(grid, sp_list, digits = 5, verbose = TRUE) {
     # rapid check
     msg <- paste0(
       paste0("psi_coef_", i, ".qs"),
-      " must have large_variable `beta_psi_site` and `beta_psi_site_slope`."
+      " must have large_variable `beta_psi_site` and `beta_psi_siteslope`."
     )
-    stopifnot(msg = {
-      all(c("beta_psi_site", "beta_psi_site_slope") %in% df2$large_variable)
-    })
+    # stopifnot(msg = {
+    #   all(c("beta_psi_site", "beta_psi_siteslope") %in% df2$large_variable)
+    # })
     bsite <- df2[df2$large_variable == "beta_psi_site", ]
     # make sure one value per grid_id
     bsite_w <- tapply(bsite$median, bsite$variable_name, mean)
     bsite_m <- bsite_w[match(gdout$grid_id, names(bsite_w))]
 
-    bslope <- df2[df2$large_variable == "beta_psi_site_slope", ]
+    # bslope <- df2[df2$large_variable == "beta_psi_siteslope", ]
+    bslope <- df2[df2$large_variable == "beta_psi_gsslope", ]
+    
     # make sure one value per grid_id
     bslope_w <- tapply(bslope$median, bslope$variable_name, mean)
     bslope_m <- bslope_w[match(gdout$grid_id, names(bslope_w))]

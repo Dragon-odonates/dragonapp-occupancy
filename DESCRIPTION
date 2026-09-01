@@ -39,7 +39,8 @@ Imports:
     plotly,
     sf,
     shinycssloaders,
-    here
+    here,
+    data.table
 Suggests: 
     devtools,
     testthat (>= 3.0.0)
