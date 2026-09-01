@@ -41,26 +41,6 @@ get_coef <- function(
                                                 variable_name = "=1")]
     }
 
-    # # check that needed variables are present
-    # needed_var <- c("beta_psi_bioclim", "beta_psi_bioclim_sq", "beta_psi_clc", "beta_psi_time")
-    # msg <- paste0(
-    #   paste0("psi_coef_", i, ".qs"),
-    #   " must have large_variable: ",
-    #   paste0(needed_var, collapse = ", "),
-    #   "."
-    # )
-    # stopifnot(msg = {
-    #   all(needed_var %in% dfi$large_variable)
-    # })
-    # psi_time <- dfi[dfi$large_variable == "beta_psi_time", ]
-    # # format it
-    # dfi <- dfi[dfi$large_variable %in% needed_var, ]
-    # dfi$variable_name <- ifelse(
-    #   dfi$large_variable == "beta_psi_clc",
-    #   paste0("clc_", dfi$variable_name),
-    #   as.character(dfi$variable_name)
-    # )
-    
     out <- data.frame(
       "large_variable" = dfi$large_variable,
       "var" = dfi$variable_name,
@@ -85,6 +65,7 @@ get_coef <- function(
     
     coef_out[[length(coef_out) + 1]] <- out
   }
+  
   # merge into a data.frame
   df <- do.call(rbind, coef_out)
   return(df)
