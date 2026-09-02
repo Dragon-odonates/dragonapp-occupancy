@@ -101,7 +101,7 @@ fluidPage(
                                               column(12,
                                                      plotly::plotlyOutput(
                                                        'pcoef', # Other coefs for p
-                                                       height = "200px"
+                                                       height = "300px"
                                                      ))
                                             )
                                           ),
@@ -120,12 +120,12 @@ fluidPage(
                                               column(12,
                                                      plotly::plotlyOutput(
                                                        'psicoef_plot', # Other coefficients
-                                                       height = "400px"
+                                                       height = "450px"
                                                      )),
                                               column(12,
                                                      plotly::plotlyOutput(
                                                        'bioclim_plot', # Bioclimatic curves
-                                                       height = "200px"
+                                                       height = "150px"
                                                      ))
                                             )
                                           )

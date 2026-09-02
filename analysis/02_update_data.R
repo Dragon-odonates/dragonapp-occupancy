@@ -1,5 +1,9 @@
 # load the functions from this repository
+# Use this for quick local testing
 devtools::load_all()
+# Use this to install package before deployment
+# devtools::install_github("Dragon-odonates/dragonapp-occupancy", force = TRUE)
+
 library(rsconnect)
 library(here)
 
@@ -25,8 +29,8 @@ sc_file <- file.path("~", "code", "dragonocc", "outputs", "01_prepare_data", "02
                      sub, scale, "scaling.rds")
 sc <- readRDS(sc_file)
 
-# sp_list <- list.dirs(data_folder)
-# sp_list <- sp_list[2:length(sp_list)]
+sp_list <- list.dirs(data_folder)
+sp_list <- sp_list[2:length(sp_list)]
 # sp <- sp_list[1]
 # # dfi <- qs2::qs_read(file.path(sp, paste0("psi_coef_", basename(sp), ".qs")))
 # 
@@ -43,7 +47,7 @@ sc <- readRDS(sc_file)
 # plotly::subplot(plist,
 #                 nrows = 2)
 # 
-# p_coef <- get_coef("p_coef_", sp_list)
+p_coef <- get_coef("p_coef_", sp_list)
 # pl <- p_coef[p_coef$species == "Sympetrum_danae",]
 # plot_ly_scatter(pl)
 # 

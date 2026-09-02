@@ -203,9 +203,25 @@ function(input, output, session) {
   output$pcoef <- renderPlotly({
     req(input$year)
     scoef <- sub_p_coef()
-    # scoef <- scoef[nchar(scoef$var) > 4, ]
-    plot_ly_scatter(scoef)
+    lv <- unique(scoef$large_variable)
     
+    if (length(lv) == 1) {
+      res <- plot_ly_scatter(scoef) |> 
+        layout(xaxis = list(title = lv))
+    } else {
+      plist <- vector(mode = "list", length = length(lv))
+      for (i in 1:length(lv)) {
+        pl <- plot_ly_scatter(scoef[scoef$large_variable == lv[i],]) |> 
+          layout(showlegend = FALSE,
+                 xaxis = list(title = lv[i]))
+        plist[[i]] <- pl
+      }
+      res <- plotly::subplot(plist,
+                      titleX = TRUE,
+                      nrows = 2,
+                      margin = 0.08)
+    }
+    return(res)
   })
   
   ## Phenology -----
@@ -240,28 +256,8 @@ function(input, output, session) {
 
 
   # Occupancy ---------------------------------------------------------------
-  ## Coefficients -----
-  output$envplot <- renderPlotly({
-    req(input$year)
-    scoef <- sub_coef()
-    # scoef <- scoef[nchar(scoef$var) > 4, ]
-    lv <- unique(scoef$large_variable)
-    
-    plist <- vector(mode = "list", length = length(lv))
-    for (i in 1:length(lv)) {
-      pl <- plot_ly_scatter(scoef[scoef$large_variable == lv[i],]) |> 
-        layout(showlegend = FALSE)
-      if (lv[i] == "beta_psi_gsslope") {
-        pl <- pl |> 
-          layout(xaxis = list(showticklabels = FALSE))
-      }
-      plist[[i]] <- pl
-    }
-    plotly::subplot(plist,
-                    nrows = 2)
-  })
   
-  ## Bioclim -----
+  ## Other coefs -----
   output$psicoef_plot <- renderPlotly({
     req(input$year)
     scoef <- sub_coef()
@@ -271,17 +267,35 @@ function(input, output, session) {
     plist <- vector(mode = "list", length = length(lv))
     for (i in 1:length(lv)) {
       pl <- plot_ly_scatter(scoef[scoef$large_variable == lv[i],]) |> 
-        layout(showlegend = FALSE)
-      if (lv[i] == "beta_psi_gsslope") {
+        layout(showlegend = FALSE,
+               xaxis = list(title = lv[i],
+                            matches = NULL))
+      if (lv[i] %in% c("beta_psi_gsslope", "psi_intercept")) {
         pl <- pl |> 
-          layout(xaxis = list(showticklabels = FALSE))
+          layout(xaxis = list(showticklabels = FALSE,
+                              title = lv[i],
+                              matches = NULL))
       }
       plist[[i]] <- pl
     }
-    plotly::subplot(plist,
-                    nrows = 2)
+    sub1 <- plotly::subplot(plist[1:2],
+                            widths = c(0.2, 0.8),
+                            titleX = TRUE,
+                            nrows = 1,
+                            margin = 0.04)
+    sub2 <- plotly::subplot(plist[3:4],
+                            widths = c(0.5, 0.5),
+                            titleX = TRUE,
+                            nrows = 1,
+                            margin = 0.04)
+    
+    plotly::subplot(sub1, sub2, 
+                    nrows = 2,
+                    titleX = TRUE,
+                    margin = 0.08)
   })
   
+  ## Bioclim -----
   output$bioclim_plot <- renderPlotly({
     req(input$year)
     
@@ -290,11 +304,14 @@ function(input, output, session) {
     ubio <- unique(sbio$var)
     plist <- vector(mode = "list", length = length(ubio))
     for (i in 1:length(ubio)) {
-      pl <- plot_ly_lines(sbio[sbio$var == ubio[i],])
+      pl <- plot_ly_lines(sbio[sbio$var == ubio[i],]) |> 
+        layout(xaxis = list(title = ubio[i]))
       plist[[i]] <- pl
     }
     plotly::subplot(plist,
-                    nrows = 1)
+                    titleX = TRUE,
+                    nrows = 1,
+                    margin = 0.04)
   })
 
 }
