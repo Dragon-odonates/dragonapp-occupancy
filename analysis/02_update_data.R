@@ -54,7 +54,7 @@ sc <- readRDS(sc_file)
 # debug(add_shiny_data)
 add_shiny_data(data_folder, grid_file, env = env, sc = sc, overwrite = TRUE)
 
-# # Run the shiny app locally
+# Run the shiny app locally
 app_path <- here::here("app")
 shiny::runApp(app_path, display.mode = "normal")
 

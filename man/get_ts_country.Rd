@@ -4,12 +4,12 @@
 \alias{get_ts_country}
 \title{Calculate the average occupancy per country and per time step}
 \usage{
-get_ts_country(grid, dir_sp, country = dragon_country(), digits = 5)
+get_ts_country(grid, sp_list, country = dragon_country(), digits = 5)
 }
 \arguments{
 \item{grid}{a \code{terra::SpatVector} object with the grid}
 
-\item{dir_sp}{Directory with output of occupancy model (qs)}
+\item{sp_list}{List of species directories to read occupancy from}
 
 \item{country}{a \code{terra::SpatVector} object with the country definition}
 

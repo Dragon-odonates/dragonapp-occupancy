@@ -4,14 +4,16 @@
 \alias{get_poly_occupancy}
 \title{Attach the occupancy outputs to the grid}
 \usage{
-get_poly_occupancy(grid, dir_sp, digits = 5)
+get_poly_occupancy(grid, sp_list, digits = 5, verbose = TRUE)
 }
 \arguments{
 \item{grid}{a \code{terra::SpatVector} object with the grid}
 
-\item{dir_sp}{directory with output of occupancy model (qs)}
+\item{sp_list}{List of species directories to read data from}
 
 \item{digits}{integer indicating the number of decimal places to be kept.}
+
+\item{verbose}{Print messages?}
 }
 \value{
 A \code{terra::SpatVector} with occupancy summarized per species

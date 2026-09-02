@@ -29,7 +29,7 @@ addLegend_decreasing(
 \item{position}{the position of the legend}
 
 \item{pal}{the color palette function, generated from
-\code{\link[leaflet:colorNumeric]{leaflet::colorNumeric()}}, \code{colorBin()}, \code{colorQuantile()}, or
+\code{\link[leaflet:colorNumeric]{colorNumeric()}}, \code{colorBin()}, \code{colorQuantile()}, or
 \code{colorFactor()}}
 
 \item{values}{the values used to generate colors from the palette function}
@@ -66,7 +66,7 @@ Supplying this value will tie the legend to the leaflet layer group
 with this name and will auto add/remove the legend as the
 group is added/removed, for example via \code{layerControl()}.
 You will need to set the \code{group} when you add a layer
-(e.g., \code{\link[leaflet:map-layers]{leaflet::addPolygons()}}) and supply the same name here.}
+(e.g., \code{\link[leaflet:addPolygons]{addPolygons()}}) and supply the same name here.}
 
 \item{data}{data from the map}
 
@@ -74,7 +74,7 @@ You will need to set the \code{group} when you add a layer
 }
 \description{
 When a color palette function is used in a map (e.g.,
-\code{\link[leaflet:colorNumeric]{leaflet::colorNumeric()}}), a color legend can be automatically derived from
+\code{\link[leaflet:colorNumeric]{colorNumeric()}}), a color legend can be automatically derived from
 the palette function. You can also manually specify the colors and labels for
 the legend.
 }

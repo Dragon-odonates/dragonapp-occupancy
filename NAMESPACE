@@ -4,18 +4,23 @@ export(addLegend_decreasing)
 export(add_shiny_data)
 export(first_str)
 export(get_area_country)
+export(get_bioclim_curve)
 export(get_coef)
 export(get_pheno)
 export(get_poly_occupancy)
 export(get_slope)
 export(get_ts_country)
 export(last_str)
-importFrom(data.table,":=")
-importFrom(data.table,.BY)
-importFrom(data.table,.EACHI)
-importFrom(data.table,.GRP)
-importFrom(data.table,.I)
-importFrom(data.table,.N)
-importFrom(data.table,.NGRP)
-importFrom(data.table,.SD)
-importFrom(data.table,data.table)
+export(plot_ly_lines)
+export(plot_ly_scatter)
+importFrom(data.table,
+  ":=",
+  .BY,
+  .EACHI,
+  .GRP,
+  .I,
+  .N,
+  .NGRP,
+  .SD,
+  data.table
+)

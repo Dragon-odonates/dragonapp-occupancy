@@ -4,8 +4,6 @@
 #' @param length.out Length of the sequence of values to get
 #'
 #' @returns List of sequences of bioclim variables (named with the variables)
-#'
-#' @examples
 get_bioclim_seq <- function(env, length.out = 100) {
   # Get sequence of bioclim
   

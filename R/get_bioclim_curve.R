@@ -9,8 +9,6 @@
 #'
 #' @returns A dataframe with columns median, qmin, qmax, x_scaled, var (name of the bioclimatic variable) and species
 #' @export
-#'
-#' @examples
 get_bioclim_curve <- function(bioclim_seq, psi_coef, scaling, digits = 5) {
   sp_all <- unique(psi_coef$species)
   

@@ -7,8 +7,11 @@
 add_shiny_data(
   dir_sp,
   grid_file,
+  env,
+  scaling,
   country = dragon_country(),
-  overwrite = FALSE
+  overwrite = FALSE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -16,9 +19,15 @@ add_shiny_data(
 
 \item{grid_file}{Path to a grid file (gpkg object)}
 
+\item{env}{Environment data (must have bioclimatic columns as bioxx_... columns)}
+
+\item{scaling}{Scaling data (must have values corresponding to bioclimatic variables in the column variable)}
+
 \item{country}{a \code{terra::SpatVector} object with the country definition}
 
 \item{overwrite}{whether existing data will be overwritten}
+
+\item{verbose}{Print messages?}
 }
 \value{
 A \code{data.frame} with the grid_id in rows and country in columns

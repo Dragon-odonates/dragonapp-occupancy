@@ -1,3 +1,9 @@
+#' plot_ly_scatter
+#'
+#' @param df dataframe with plotting data. Must have columns x, qmin, qmax, dmin, dmax, median and popup.
+#'
+#' @returns A plot_ly plot with pojnts and error bars
+#' @export
 plot_ly_scatter <- function(df) {
   res <- plot_ly(
     data = df,
@@ -27,6 +33,12 @@ plot_ly_scatter <- function(df) {
   return(res)
 }
 
+#' plot_ly_lines
+#'
+#' @param df dataframe with plotting data. Must have columns x, qmin, qmax, median and popup.
+#'
+#' @returns A plot_ly plot with lines and error ribbon
+#' @export
 plot_ly_lines <- function(df) {
   res <- plot_ly(
     df,
