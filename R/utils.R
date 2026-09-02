@@ -10,7 +10,8 @@ get_slope <- function(x) {
       x = seq_along(x),
       y = as.numeric(x)
     )
-    out <- stats::coef(stats::lm(y ~ x, df))[2]
+    # out <- stats::coef(stats::lm(y ~ x, df))[2]
+    out <- exp(coef(lm(log(y) ~ x, df))[[2]]) - 1
     return(as.numeric(out))
   } else {
     return(NA)
@@ -97,6 +98,7 @@ dragon_country <- function() {
 #' factor palette, and a function to return labels of the form \samp{x[i] - x[i
 #' + 1]} for bin and quantile palettes (in the case of quantile palettes,
 #' `x` is the probabilities instead of the values of breaks).
+#'
 #' @param map a leaflet map
 #' @param position the position of the legend
 #' @param pal the color palette function, generated from
@@ -129,6 +131,7 @@ dragon_country <- function() {
 #'   (e.g., [addPolygons()]) and supply the same name here.
 #' @param data data from the map
 #' @param decreasing whether the legend should be in decreasing order
+#' @param percent Format as percents? (i.e. add % and +)
 #'
 #' @export
 addLegend_decreasing <- function(
@@ -147,7 +150,8 @@ addLegend_decreasing <- function(
   layerId = NULL,
   group = NULL,
   data = leaflet::getMapData(map),
-  decreasing = FALSE
+  decreasing = FALSE,
+  percent = FALSE
 ) {
   position <- match.arg(position)
   type <- "unknown"
@@ -192,6 +196,7 @@ addLegend_decreasing <- function(
       p <- (cuts - r[1]) / (r[2] - r[1])
       extra <- list(p_1 = p[1], p_n = p[n])
       p <- c("", paste0(100 * p, "%"), "")
+      
       if (decreasing == TRUE) {
         colors <- pal(rev(c(r[1], cuts, r[2])))
         labels <- rev(labFormat(type = "numeric", cuts))
@@ -200,6 +205,13 @@ addLegend_decreasing <- function(
         labels <- rev(labFormat(type = "numeric", cuts))
       }
       colors <- paste(colors, p, sep = " ", collapse = ", ")
+      
+      if (percent) {
+        labels <- ifelse(labels > 0,
+                       paste0("+", labels, "%"),
+                       paste0(labels, "%"))
+      }
+      
     } else if (type == "bin") {
       cuts <- args$bins
       n <- length(cuts)

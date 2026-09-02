@@ -55,6 +55,7 @@ get_poly_occupancy <- function(grid, sp_list, digits = 5, verbose = TRUE) {
     # get characteristics
     average <- apply(wide, 1, mean)
     slope <- apply(wide, 1, get_slope)
+    slope <- slope*100 # Get slope in percent
     
     # load psi coef
     coef_file <- file.path(dir_i, paste0("psi_coef_", i, ".qs"))

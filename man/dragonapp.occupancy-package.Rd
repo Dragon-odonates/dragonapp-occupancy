@@ -21,7 +21,6 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Romain Frelat \email{rom.frelat@gmail.com} (\href{https://orcid.org/0000-0002-8631-4398}{ORCID})
   \item Lisa Nicvert \email{lisa.nicvert@fondationbiodiversite.fr} (\href{https://orcid.org/0009-0006-5763-0865}{ORCID})
 }
 
