@@ -50,7 +50,7 @@ function(input, output, session) {
       ind <- names(pts)[grep(input$map, names(pts))[1]]
     }
 
-    if (input$map %in% c("slope", "beta_psi", "beta_psi_slope")) {
+    if (input$map == "slope") {
       max_abs <- max(abs(data.frame(pts)[, ind]), na.rm = TRUE)
       pal <- leaflet::colorNumeric(
         palette = "RdYlBu",
@@ -65,6 +65,10 @@ function(input, output, session) {
       )
     }
     return(pal)
+  })
+  
+  legend_name <- reactive({
+    names(leg_names[leg_names == input$map])
   })
 
   sub_ph <- reactive({
@@ -128,7 +132,7 @@ function(input, output, session) {
       names(pts)[grepl(input$map, names(pts))]
     )
 
-    leg <- ifelse(input$map == "dynamic", input$year, input$map)
+    leg <- ifelse(input$map == "dynamic", paste0(legend_name(), " (", input$year, ")"), legend_name())
 
     leafletProxy("mapdistri", data = pts) |>
       #clearShapes() |>
@@ -148,7 +152,8 @@ function(input, output, session) {
         pal = pal,
         opacity = 1,
         title = leg,
-        decreasing = TRUE
+        decreasing = TRUE,
+        percent = input$map == "slope"
       )
   })
 

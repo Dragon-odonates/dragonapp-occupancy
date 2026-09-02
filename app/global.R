@@ -47,3 +47,7 @@ Z <- 4
 map_choices <- c("mean occupancy" = "average", 
                  "occupancy trend" = "slope", 
                  "dynamic occupancy" = "dynamic")
+
+leg_names <- c("Occupancy" = "average", 
+               "Trend" = "slope", 
+               "Occupancy" = "dynamic")
