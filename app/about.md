@@ -33,7 +33,7 @@ The data comes from various databases from our partners across Europe. Data coll
 -  Florent Prunier and Martiño Cabana Otero: **Iberian database** (Spain and Portugal)
 -  Cesc Múrria, Xavier Maynou and Ricard Martín: **Catalonia study group of odonates (Oxygastra) database** (Catalonia, Spain)
 -  Damian McFerran (Centre for Environmental Data and Recording, CEDaR): **Dragonfly Ireland database** (Ireland island)
--  Dave Wall (NBDC): **Dragonfly Ireland 2019-2024 database** (Republic of Ireland)
+-  Dave Wall (National Biodiversity Data Centre, NBDC): **Dragonfly Ireland 2019-2024 database** (Republic of Ireland)
 -  Giacomo Assandri, Gianandrea La Porta, Sönke Hardesen: **Italian Odonatological Society (Società italiana per lo Studio e la  Conservazione delle Libellule - ODV) database** (Italy)
 -  Xavier Mestdagh: **National Museum of Natural History (MNHN) data** (Luxemburg)
 -  Roy van Grunsven: **National Database of Flora and Fauna data** (Netherlands)
