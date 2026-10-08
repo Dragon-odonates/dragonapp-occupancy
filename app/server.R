@@ -53,7 +53,7 @@ function(input, output, session) {
     if (input$map == "slope") {
       max_abs <- max(abs(data.frame(pts)[, ind]), na.rm = TRUE)
       pal <- leaflet::colorNumeric(
-        palette = "RdYlBu",
+        palette = "RdBu",
         domain = c(-max_abs, max_abs),
         na.color = "transparent"
       )
