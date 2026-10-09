@@ -23,27 +23,6 @@ function(input, output, session) {
     }
     return(sdf)
   })
-
-  colpal <- reactive({
-    pts <- sub_pt()
-    ind <- names(pts)[grep(input$map, names(pts))[1]]
-
-    if (input$map == "slope") {
-      max_abs <- max(abs(data.frame(pts)[, ind]), na.rm = TRUE)
-      pal <- leaflet::colorNumeric(
-        palette = "RdBu",
-        domain = c(-max_abs, max_abs),
-        na.color = "transparent"
-      )
-    } else {
-      pal <- leaflet::colorNumeric(
-        palette = "viridis",
-        domain = unlist(data.frame(pts)[, ind]),
-        na.color = "transparent"
-      )
-    }
-    return(pal)
-  })
   
   legend_name <- reactive({
     names(leg_names[leg_names == input$map])
@@ -95,40 +74,19 @@ function(input, output, session) {
 
   # Maps --------------------------------------------------------------------
   output$mapdistri <- renderLeaflet({
+    # Map backgroud
     req(input$spe)
-    leaflet(pt, options = leafletOptions(minZoom = Zmin, maxZoom = Zmax)) |>
-      addTiles() |>
-      setView(lng = 15, lat = 55, zoom = Z)
+    plot_base_map(pt, Zmin, Zmax, bounds = bb)
   })
 
   observe({
-    pts <- sub_pt()
-    pal <- colpal()
-    ind <- names(pts)[grepl(input$map, names(pts))]
-
-    leg <- legend_name()
-
-    leafletProxy("mapdistri", data = pts) |>
-      #clearShapes() |>
-      removeGlPolygons(layerId = 'mapid') |>
-      addGlPolygons(
-        data = pts,
-        fillColor = pal(pts[[ind]]),
-        fillOpacity = 0.7,
-        popup = pts[[ind]],
-        layerId = 'mapid'
-      ) |>
-      clearControls() |>
-      # fmt:skip
-      addLegend_decreasing(
-        position = "bottomright",
-        values = pts[[ind]],
-        pal = pal,
-        opacity = 1,
-        title = leg,
-        decreasing = TRUE,
-        percent = input$map == "slope"
-      )
+    # Map reactive update
+    leafletProxy("mapdistri") |>
+      plot_polygons_map(
+        map_type = input$map, 
+        map_data = sub_pt(), 
+        leg_names = legend_name()
+        )
   })
 
   # Trends per species ------------------------------------------------------

@@ -130,3 +130,88 @@ plot_trend <- function(dat_psi) {
           legend.position = "bottom")
   return(g)
 }
+
+
+
+# Leaflet -----------------------------------------------------------------
+
+#' Plot base map
+#'
+#' @param map_data the map data
+#' @param Zmin min zoom
+#' @param Zmax max zoom
+#' @param bounds bounds (xmin, ymin, xmax, ymax)
+#'
+#' @returns a leaflet map
+#' @export
+plot_base_map <- function(map_data, Zmin, Zmax, bounds) {
+  bounds <- unname(bounds)
+  m <- leaflet(map_data, options = leafletOptions(minZoom = Zmin, maxZoom = Zmax)) |>
+    addTiles() |>
+    fitBounds(bounds[1], bounds[2], bounds[3], bounds[4])
+  return(m)
+}
+
+
+#' Plot polygons on map
+#'
+#' @param leaflet_map A leaflet map (e.g. created with `plot_base_map`)
+#' @param map_type Map type (slope or average)
+#' @param map_data Data to use for plotting polygons
+#' @param layer_id layer id for the plotted polygons
+#' @param leg_names A named vector for the legend names 
+#' (names are the titles to display, values correspond to `map_type`)
+#'
+#' @returns A leaflet map
+#' @export
+plot_polygons_map <- function(leaflet_map, 
+                              map_type, 
+                              map_data, 
+                              leg_names,
+                              layer_id = "mapid") {
+  
+  # Get the columns to plot depending on type
+  ind <- names(map_data)[grepl(map_type, names(map_data))]
+  
+  # Get legend title
+  leg <- names(leg_names[leg_names == map_type])
+  
+  if (map_type == "slope") {
+    max_abs <- max(abs(data.frame(map_data)[, ind]), na.rm = TRUE)
+
+    pal <- leaflet::colorNumeric(
+      palette = "RdBu",
+      domain = c(-max_abs, max_abs),
+      na.color = "transparent"
+    )
+  } else {
+    pal <- leaflet::colorNumeric(
+      palette = "viridis",
+      domain = unlist(data.frame(map_data)[, ind]),
+      na.color = "transparent"
+    )
+  }
+  
+  m <- leaflet_map |>
+    removeGlPolygons(layerId = layer_id) |>
+    addGlPolygons(
+      data = map_data,
+      fillColor = pal(map_data[[ind]]),
+      fillOpacity = 0.7,
+      popup = map_data[[ind]],
+      layerId = layer_id
+    ) |>
+    clearControls() |>
+    # fmt:skip
+    addLegend_decreasing(
+      position = "bottomright",
+      values = map_data[[ind]],
+      pal = pal,
+      opacity = 1,
+      title = leg,
+      decreasing = TRUE,
+      percent = (map_type == "slope")
+    )
+  
+  return(m)
+}

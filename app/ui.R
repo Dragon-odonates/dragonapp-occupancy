@@ -81,7 +81,8 @@ fluidPage(
                                                    br()
                                                  ),
                                                  ggiraph::girafeOutput(
-                                                        'countryts'
+                                                        'countryts',
+                                                        height = "500px"
                                                  )
                                           ),
                                           nav_panel(

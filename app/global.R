@@ -15,10 +15,10 @@ suppressPackageStartupMessages({
 })
 
 # For deployment
-folder <- "data"
+# folder <- "data"
 
 # For local testing
-# folder <- here::here("app", "data")
+folder <- here::here("app", "data")
 
 set_theme(theme_minimal())
 
@@ -48,9 +48,10 @@ pcoef <- read.csv(file.path(folder, "p_coef.csv"))
 # App UI ------------------------------------------------------------------
 
 # Leaflet zoom parameter
-Zmin <- 2
-Zmax <- 7
-Z <- 4
+Zmin <- 3
+Zmax <- 8
+
+bb <- sf::st_bbox(pt)
 
 # Species list
 sp_choices <- sort(unique(df$species))
@@ -74,14 +75,19 @@ leg_names <- c("Mean occupancy" = "average",
 
 # Tests -------------------------------------------------------------------
 
-# # country <- c("European trend", "Germany")
-# country <- c("Germany")
+# country <- c("European trend", "Germany")
 # spe <- df$species[1]
 # 
 # df_sub <- df[df$species == spe & df$country %in% country, ]
-# # df_eur <- df[df$species == spe & df$country == "European trend", ]
 # 
-# g <- plot_trend(df_sub)
-# girafe(ggobj = g)
+# # g <- plot_trend(df_sub)
+# # girafe(ggobj = g)
+# 
+# map <- "slope"
+# 
+# sub_pt <- pt[grepl(spe, names(pt))]
+# 
+# m <- plot_base_map(pt, Zmin, Zmax, bounds = bb)
+# plot_polygons_map(m, map_type = map, map_data = sub_pt, leg_names = leg_names)
 
 
