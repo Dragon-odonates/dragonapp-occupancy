@@ -83,3 +83,50 @@ plot_ly_lines <- function(df) {
     )
   return(res)
 }
+
+
+# ggplot ------------------------------------------------------------------
+
+#' Plot trend
+#' 
+#' Plot occupancy trends
+#'
+#' @param dat_psi A data.frame with columns year, mean, qmin, qmax, country
+#'
+#' @returns A ggplot (created with ggiraph) with one trend line + CI pre country
+#' 
+#' @export
+plot_trend <- function(dat_psi) {
+  country_u <- unique(dat_psi$country)
+  years_u <- unique(dat_psi$year)
+  
+  if (length(country_u) > 1) {
+    # Several countries
+    cols <- scales::hue_pal()(length(country_u))
+    names(cols) <- country_u
+    cols["European trend"] <- "black"
+  } else {
+    cols <- "black"
+    names(cols) <- country_u
+  }
+  
+  
+  lw <- stats::setNames(rep(0.6, length(country_u)), country_u)
+  lw["European trend"] <- 1 
+  
+  g <- ggplot(dat_psi, aes(x = year, group = country)) +
+    geom_ribbon(aes(ymin = qmin, ymax = qmax, fill = country),
+                alpha = 0.2, show.legend = FALSE) +
+    geom_line_interactive(aes(
+      y = mean, colour = country, linewidth = country,
+      tooltip = country)) +
+    scale_color_manual(values = cols) +
+    scale_fill_manual(values = cols) +
+    scale_linewidth_manual(values = lw) +
+    xlab("Year") +
+    ylab("Mean occupancy") +
+    scale_x_continuous(breaks = seq(min(years_u), max(years_u), by = 4)) +
+    theme(legend.title = element_blank(),
+          legend.position = "bottom")
+  return(g)
+}

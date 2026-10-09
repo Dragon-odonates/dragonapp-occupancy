@@ -1,22 +1,22 @@
 # calculate slope -------------------------------
-#' calculate linear slope of a numeric vector
+
+#' Get slope
+#' 
+#' Get exp(a) - 1, where a is the slope estimator of the linear model y ~ x
 #'
-#' @param x numeric vector
+#' @param x x: predictor
+#' @param y y: variable to predict
+#' @param varx optional precomputed variance of x
 #'
-#' @export
-get_slope <- function(x) {
-  if (sum(is.na(x)) <= length(x) * 0.5) {
-    df <- data.frame(
-      x = seq_along(x),
-      y = as.numeric(x)
-    )
-    # out <- stats::coef(stats::lm(y ~ x, df))[2]
-    out <- exp(coef(lm(log(y) ~ x, df))[[2]]) - 1
-    return(as.numeric(out))
-  } else {
-    return(NA)
+#' @returns exp(a) - 1 where b is the least-squares estimate of the regression slope
+#' in the model y = a*x + b
+get_slope <- function(x, y, varx = NULL) {
+  if (is.null(varx)) {
+    varx <- stats::var(x)
   }
+  exp(stats::cov(x, y)/varx) - 1
 }
+
 
 # get first element -------------------------------
 #' get the first element of a string

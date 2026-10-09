@@ -20,15 +20,15 @@ fluidPage(
                      "Distribution",
                      fluidRow(
                             column(
-                                   6,
-                                   selectInput(
-                                     "spe",
-                                     "Species",
-                                     choices = sp_choices,
-                                     selected = sp_choices[1],
-                                     multiple = FALSE
-                                     ),
-                                   br()
+                               6,
+                               selectInput(
+                                 "spe",
+                                 "Species",
+                                 choices = sp_choices,
+                                 selected = sp_choices[1],
+                                 multiple = FALSE
+                                 ),
+                               br()
                             ),
                             column(
                                    3,
@@ -48,17 +48,9 @@ fluidPage(
                                        icon("circle-info"),
                                        htmltools::tags$p(class = "mytooltiptext",
                                                          "mean occupancy: species mean occupancy; 
-                                                          occupancy slope: mean yearly trend of occupancy (%); 
-                                                          dynamic occupancy: occupancy values for each year (choose)" )
+                                                          occupancy slope: mean yearly trend of occupancy (%);" )
                                        )
                                      )
-                            ),
-                            column(
-                                   3,
-                                   conditionalPanel(
-                                          'input.map === "dynamic"',
-                                          uiOutput('inYear')
-                                   )
                             )
                      ),
                      fluidRow(
@@ -76,9 +68,20 @@ fluidPage(
                                                                        "Occupancy trend for each country (average across all cells)" )
                                                    )
                                                  ),
-                                                 plotly::plotlyOutput(
-                                                        'countryts',
-                                                        height = "600px"
+                                                 column(
+                                                   3,
+                                                   pickerInput(
+                                                     "country",
+                                                     "Countries",
+                                                     choices = country_choices,
+                                                     selected = country_choices[1],
+                                                     multiple = TRUE,
+                                                     options = list(`actions-box` = TRUE)
+                                                   ),
+                                                   br()
+                                                 ),
+                                                 ggiraph::girafeOutput(
+                                                        'countryts'
                                                  )
                                           ),
                                           nav_panel(

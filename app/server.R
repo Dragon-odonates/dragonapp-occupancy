@@ -1,21 +1,4 @@
 function(input, output, session) {
-  ## Reactive input ----------------
-  output$inYear <- renderUI({
-    sliderInput(
-      "year",
-      "Year",
-      min = min(yr_range),
-      max = max(yr_range),
-      value = min(yr_range),
-      step = 1,
-      sep = "",
-      animate = animationOptions(
-        interval = 1500,
-        loop = TRUE
-      )
-    )
-  })
-
   ## Reactive data subset ----------
   sub_pt <- reactive({
     req(input$spe)
@@ -33,22 +16,17 @@ function(input, output, session) {
   sub_ts <- reactive({
     req(input$spe)
     # if statement to avoid issue when changing dataset
-    if (input$spe %in% df$species) {
-      sdf <- df[df$species == input$spe, ]
+    if (input$spe %in% df$species & all(input$country %in% df$country)) {
+      sdf <- df[df$species == input$spe & df$country %in% input$country, ]
     } else {
-      sdf <- df[df$species == sort(df$species)[1], ]
+      sdf <- df[df$species == sort(df$species)[1] & df$country == df$country[1], ]
     }
     return(sdf)
   })
 
   colpal <- reactive({
     pts <- sub_pt()
-    if (input$map == "dynamic") {
-      ind <- names(pts)[-c(1:4, ncol(pts))]
-      # paste0(input$spe, ".", yr_shape)
-    } else {
-      ind <- names(pts)[grep(input$map, names(pts))[1]]
-    }
+    ind <- names(pts)[grep(input$map, names(pts))[1]]
 
     if (input$map == "slope") {
       max_abs <- max(abs(data.frame(pts)[, ind]), na.rm = TRUE)
@@ -126,13 +104,9 @@ function(input, output, session) {
   observe({
     pts <- sub_pt()
     pal <- colpal()
-    ind <- ifelse(
-      input$map == "dynamic",
-      names(pts)[grepl(input$year, names(pts))],
-      names(pts)[grepl(input$map, names(pts))]
-    )
+    ind <- names(pts)[grepl(input$map, names(pts))]
 
-    leg <- ifelse(input$map == "dynamic", paste0(legend_name(), " (", input$year, ")"), legend_name())
+    leg <- legend_name()
 
     leafletProxy("mapdistri", data = pts) |>
       #clearShapes() |>
@@ -158,55 +132,20 @@ function(input, output, session) {
   })
 
   # Trends per species ------------------------------------------------------
-  output$countryts <- renderPlotly({
-    req(input$year)
-    dts <- sub_ts()
-    num_countries <- length(unique(dts$country)) - 1
-    pal <- colorRampPalette(RColorBrewer::brewer.pal(8, "Set2"))(num_countries)
-
-    plot_ly(
-      dts[dts$country != "All", ],
-      x = ~year,
-      y = ~mean,
-      color = ~country,
-      colors = pal,
-      type = "scatter",
-      mode = "lines+markers"
-    ) |>
-      add_trace(
-        data = dts[dts$country == "All", ],
-        x = ~year,
-        y = ~mean,
-        name = "all",
-        type = "scatter",
-        mode = "lines+markers",
-        line = list(color = "black", width = 4),
-        marker = list(color = "black")
-      ) |>
-      layout(
-        xaxis = list(title = 'Year',
-                     tickvals = seq(2000, 2024, by = 4)),
-        yaxis = list(title = 'Mean occupancy probability'),
-        shapes = list(list(
-          type = "line",
-          x0 = input$year,
-          x1 = input$year,
-          y0 = 0,
-          y1 = max(dts$mean, na.rm = TRUE),
-          line = list(color = "black")
-        ))
-      ) |>
-      config(
-        modeBarButtons = list(list("toImage")),
-        displaylogo = FALSE
-      )
+  output$countryts <- renderGirafe({
+    g <- plot_trend(sub_ts())
+    girafe(ggobj = g,
+           # Set aspect ratio
+           width_svg  = 7,
+           height_svg = 5,
+           options = list(opts_sizing(rescale = TRUE, width = 1))
+           )
+    
   })
-
-
+  
   # Detection ---------------------------------------------------------------
   ## Coefficients -----
   output$pcoef <- renderPlotly({
-    req(input$year)
     scoef <- sub_p_coef()
     lv <- unique(scoef$large_variable)
     
@@ -231,7 +170,6 @@ function(input, output, session) {
   
   ## Phenology -----
   output$phenots <- renderPlotly({
-    req(input$year)
     sph <- sub_ph()
     sph$x <- as.Date(paste("2000", sph$doy), format = "%Y %j")
 
@@ -264,7 +202,6 @@ function(input, output, session) {
   
   ## Other coefs -----
   output$psicoef_plot <- renderPlotly({
-    req(input$year)
     scoef <- sub_coef()
     # scoef <- scoef[nchar(scoef$var) > 4, ]
     lv <- unique(scoef$large_variable)
@@ -302,8 +239,6 @@ function(input, output, session) {
   
   ## Bioclim -----
   output$bioclim_plot <- renderPlotly({
-    req(input$year)
-    
     sbio <- sub_bio()
     
     ubio <- unique(sbio$var)

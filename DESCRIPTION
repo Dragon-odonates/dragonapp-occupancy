@@ -39,7 +39,10 @@ Imports:
     sf,
     shinycssloaders,
     here,
-    data.table
+    data.table,
+    ggplot2,
+    ggiraph,
+    scales
 Suggests: 
     devtools,
     testthat (>= 3.0.0)

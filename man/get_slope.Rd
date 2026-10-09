@@ -2,13 +2,21 @@
 % Please edit documentation in R/utils.R
 \name{get_slope}
 \alias{get_slope}
-\title{calculate linear slope of a numeric vector}
+\title{Get slope}
 \usage{
-get_slope(x)
+get_slope(x, y, varx = NULL)
 }
 \arguments{
-\item{x}{numeric vector}
+\item{x}{x: predictor}
+
+\item{y}{y: variable to predict}
+
+\item{varx}{optional precomputed variance of x}
+}
+\value{
+exp(a) - 1 where b is the least-squares estimate of the regression slope
+in the model y = a*x + b
 }
 \description{
-calculate linear slope of a numeric vector
+Get exp(a) - 1, where a is the slope estimator of the linear model y ~ x
 }

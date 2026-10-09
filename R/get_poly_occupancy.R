@@ -54,24 +54,18 @@ get_poly_occupancy <- function(grid, sp_list, digits = 5, verbose = TRUE) {
     wide <- wide[match(gdout$grid_id, row.names(wide)), ]
     # get characteristics
     average <- apply(wide, 1, mean)
-    slope <- apply(wide, 1, get_slope)
+    years <- as.numeric(colnames(wide))
+    slope <- apply(wide, 1, function(w) get_slope(y = w, x = years, varx = stats::var(years)))
     slope <- slope*100 # Get slope in percent
     
-    # load psi coef
-    coef_file <- file.path(dir_i, paste0("psi_coef_", i, ".qs"))
-    df2 <- qs2::qs_read(coef_file)
-    # rapid check
-    msg <- paste0(
-      paste0("psi_coef_", i, ".qs"),
-      " must have large_variable `beta_psi_site` and `beta_psi_siteslope`."
-    )
 
-    outi <- data.frame(average, slope, wide)
+    outi <- data.frame(average, slope)
     names(outi) <- paste(
       i,
-      c("average", "slope", colnames(wide)),
+      c("average", "slope"),
       sep = "."
     )
+    
     # round values to make dataset smaller
     outi <- apply(outi, 2, round, digits = digits)
     # attach with grid
