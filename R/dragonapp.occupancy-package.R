@@ -4,6 +4,7 @@
 ## usethis namespace: start
 #' @import ggplot2
 #' @import ggiraph
+#' @import leaflet
 #' @importFrom data.table :=
 #' @importFrom data.table .BY
 #' @importFrom data.table .EACHI

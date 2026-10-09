@@ -193,8 +193,8 @@ plot_polygons_map <- function(leaflet_map,
   }
   
   m <- leaflet_map |>
-    removeGlPolygons(layerId = layer_id) |>
-    addGlPolygons(
+    leafgl::removeGlPolygons(layerId = layer_id) |>
+    leafgl::addGlPolygons(
       data = map_data,
       fillColor = pal(map_data[[ind]]),
       fillOpacity = 0.7,

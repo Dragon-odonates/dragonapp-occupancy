@@ -15,10 +15,10 @@ suppressPackageStartupMessages({
 })
 
 # For deployment
-# folder <- "data"
+folder <- "data"
 
 # For local testing
-folder <- here::here("app", "data")
+# folder <- here::here("app", "data")
 
 set_theme(theme_minimal())
 
