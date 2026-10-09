@@ -1,5 +1,5 @@
 # Use this to install package before deployment
-# devtools::install_github("Dragon-odonates/dragonapp-occupancy", force = TRUE)
+devtools::install_github("Dragon-odonates/dragonapp-occupancy", force = TRUE)
 
 app_path <- here::here("app")
 

@@ -14,8 +14,11 @@ suppressPackageStartupMessages({
   require(dragonapp.occupancy)
 })
 
-# folder <- "data"
-folder <- here::here("app", "data")
+# For deployment
+folder <- "data"
+
+# For local testing
+# folder <- here::here("app", "data")
 
 set_theme(theme_minimal())
 
