@@ -115,11 +115,11 @@ plot_trend <- function(dat_psi) {
   lw["European trend"] <- 1 
   
   g <- ggplot(dat_psi, aes(x = year, group = country)) +
-    geom_ribbon(aes(ymin = qmin, ymax = qmax, fill = country),
-                alpha = 0.2, show.legend = FALSE) +
-    geom_line_interactive(aes(
-      y = mean, colour = country, linewidth = country,
-      tooltip = country)) +
+    geom_ribbon_interactive(
+      aes(ymin = qmin, ymax = qmax, fill = country, tooltip = country),
+      alpha = 0.2, show.legend = FALSE
+      ) +
+    geom_line(aes(y = mean, colour = country, linewidth = country)) +
     scale_color_manual(values = cols) +
     scale_fill_manual(values = cols) +
     scale_linewidth_manual(values = lw) +
