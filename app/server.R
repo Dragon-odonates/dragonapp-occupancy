@@ -1,6 +1,7 @@
 function(input, output, session) {
   ## Reactive data subset ----------
   sub_pt <- reactive({
+    
     req(input$spe)
     # if statement to avoid issue when changing dataset
     if (any(grepl(input$spe, names(pt)))) {
@@ -14,6 +15,11 @@ function(input, output, session) {
   })
 
   sub_ts <- reactive({
+    validate(
+      # Print a message if no country is selected
+      need(input$country != "", "Please select at least one country")
+    )
+    
     req(input$spe)
     # if statement to avoid issue when changing dataset
     if (input$spe %in% df$species & all(input$country %in% df$country)) {
