@@ -132,6 +132,229 @@ plot_trend <- function(dat_psi) {
 }
 
 
+#' Plot coefficients
+#'
+#' @param coef_dt coefficients data.table
+#' @param grid spatial grid (must have `grid_id`)
+#' @param variable column name containing variables (x-axis)
+#' @param large_variable_col column name containing large variables (each ggplot from the list = 'facets')
+#' @param min column name containing min quantile
+#' @param max column name containing max quantile
+#' @param reorder_var variables that should be reordered along the x-axis
+#' @param var_spatial large variables that have spatial values (to be displayed as map)
+#' @param plot_hline plot horizontal line at zero?
+#'
+#' @returns a list of ggplot
+#' @export
+plot_coef <- function(
+    coef_dt, 
+    grid,
+    variable = "var",
+    large_variable_col = "large_variable",
+    min = "qmin",
+    max = "qmax",
+    reorder_var = NULL,
+    var_spatial = c("beta_psi_gssite", "beta_psi_gsslope", "beta_p_site"),
+    plot_hline = FALSE) {
+  
+  # Initialize empty plot list
+  gg <- list()
+  
+  for (lv in sort(unique(coef_dt[[large_variable_col]]))) {
+    # One plot for each large_variable
+    
+    # Filter for that level
+    df_sub <- coef_dt[coef_dt[[large_variable_col]] == lv, ]
+    
+    if (lv %in% var_spatial) {
+      g <- plot_spatial(
+        dt = df_sub, 
+        variable = variable,
+        grid = grid,
+        ggtitle = lv)
+    } else {
+      if (lv %in% reorder_var) {
+        reorder <- TRUE
+      } else {
+        reorder <- FALSE
+      }
+      g <- plot_errorbar(
+        df_sub,
+        variable = variable,
+        min = min,
+        max = max,
+        ggtitle = lv,
+        reorder = reorder,
+        plot_hline = plot_hline)
+    }
+    
+    
+    gg <- c(gg, list(g))
+  }
+  return(gg)
+}
+
+
+#' Plot errorbar
+#' 
+#' Plot coefficients with error bars
+#'
+#' @param dt data.table with coefficients
+#' @param variable column name containing variables (x-axis)
+#' @param min column name containing min quantile
+#' @param max column name containing max quantile
+#' @param reorder reorder the x-axis?
+#' @param plot_hline plot horizontal line at zero?
+#' @param large_variable_col 
+#' @param ggtitle the plot title
+#'
+#' @returns a ggplot
+#' @export
+plot_errorbar <- function(
+    dt, 
+    variable = "var",
+    min = "qmin",
+    max = "qmax",
+    ggtitle = NULL,
+    reorder = FALSE,
+    plot_hline = FALSE) {
+  
+  if (reorder) {
+    setorder(dt, median)
+    set(dt, 
+        j = variable, 
+        value = factor(dt[[variable]], levels = dt[[variable]])
+    )
+  }
+  
+  g <- ggplot(dt,
+              aes(y = median, x = .data[[variable]])) +
+    geom_errorbar_interactive(
+      data = dt,
+      aes(
+        ymin = .data[[min]],
+        ymax = .data[[max]],
+        tooltip = paste0(
+          .data[[variable]], "\n",
+          "value: ", round(median, 2),
+          " [", round(.data[[min]], 2), "; ",
+          round(.data[[max]], 2), "]"
+        )
+      ),
+      alpha = .3) +
+    geom_point() +
+    ggtitle(ggtitle) +
+    theme(axis.title = element_blank())
+  
+  if (nrow(dt) > 5) {
+    g <- g + 
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  }
+  
+  if (plot_hline) {
+    g <- g + ggplot2::geom_hline(aes(yintercept = 0),
+                                 linetype = "dashed")
+  }
+  
+  if (nrow(dt) > 50) {
+    g <- g + 
+      theme(axis.text.x = element_blank(),
+            axis.ticks.x = element_blank())
+  }
+  return(g)
+}
+
+#' Plot errorbar
+#' 
+#' Plot coefficients with error bars
+#'
+#' @param dt data.table with coefficients
+#' @param variable column name containing variables (x-axis)
+#' @param min column name containing min quantile
+#' @param max column name containing max quantile
+#' @param reorder reorder the x-axis?
+#' @param plot_hline plot horizontal line at zero?
+#' @param large_variable_col 
+#' @param ggtitle the plot title
+#'
+#' @returns a ggplot
+#' @export
+plot_errorline <- function(
+    dt, 
+    x,
+    min = "qmin",
+    max = "qmax",
+    ggtitle = NULL,
+    plot_hline = FALSE) {
+  
+  g <- ggplot(dt,
+              aes(y = median, x = .data[[x]])) +
+    geom_ribbon(
+      data = dt,
+      aes(
+        ymin = .data[[min]],
+        ymax = .data[[max]]
+      ),
+      alpha = .3) +
+    geom_line() +
+    ggtitle(ggtitle) +
+    theme(axis.title = element_blank())
+  
+  if (plot_hline) {
+    g <- g + ggplot2::geom_hline(aes(yintercept = 0),
+                                 linetype = "dashed")
+  }
+  
+  return(g)
+}
+
+#' Plot spatial
+#' 
+#' Plot spatial coefficients
+#'
+#' @param dt a data.table
+#' @param grid a grid (must have column grid_id)
+#' @param range values range 
+#' @param legend_title legend title
+#' @param na_color color for NA grid values
+#' @param ggtitle the plot title
+#' @param variable Name of the variable column containing `grid_id` (in the `grid`)
+#'
+#' @returns a ggplot
+#' @export
+plot_spatial <- function(
+    dt, 
+    grid,
+    variable = "var",
+    ggtitle = NULL,
+    range = NULL,
+    legend_title = NULL,
+    na_color = "grey") {
+  
+  # Put data on grid
+  grid_var <- grid |> 
+    dplyr::left_join(dt, by = c("grid_id" = variable))
+  
+  # Get bbox
+  bbox <- st_bbox(grid_var)
+  
+  g <- ggplot() +
+    geom_sf(data = grid_var, aes(fill = .data[["median"]]), color = "transparent") +
+    coord_sf(xlim = bbox[c("xmin", "xmax")],
+             ylim = bbox[c("ymin", "ymax")]) +
+    theme_void() +
+    theme(legend.ticks = element_blank()) +
+    scale_fill_gradient2(
+      name = legend_title,
+      low = "darkred",
+      mid = "white",
+      high = "darkblue",
+      na.value = na_color,
+      midpoint = 0) +
+    ggtitle(ggtitle)
+  return(g)
+}
+
 
 # Leaflet -----------------------------------------------------------------
 
