@@ -69,7 +69,7 @@ fluidPage(
                                                    )
                                                  ),
                                                  column(
-                                                   3,
+                                                   6,
                                                    pickerInput(
                                                      "country",
                                                      "Countries",
