@@ -6,8 +6,8 @@
 \usage{
 plot_spatial(
   dt,
-  variable = "var",
   grid,
+  variable = "var",
   ggtitle = NULL,
   range = NULL,
   legend_title = NULL,
@@ -17,9 +17,9 @@ plot_spatial(
 \arguments{
 \item{dt}{a data.table}
 
-\item{variable}{Name of the variable column containing \code{grid_id} (in the \code{grid})}
-
 \item{grid}{a grid (must have column grid_id)}
+
+\item{variable}{Name of the variable column containing \code{grid_id} (in the \code{grid})}
 
 \item{ggtitle}{the plot title}
 

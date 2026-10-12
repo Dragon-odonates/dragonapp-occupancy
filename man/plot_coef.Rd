@@ -11,9 +11,8 @@ plot_coef(
   large_variable_col = "large_variable",
   min = "qmin",
   max = "qmax",
-  reorder_var = c("site intercept", "site slope", "Gaussian slope", "Gaussian intercept",
-    "site"),
-  var_spatial = c("beta_psi_gssite", "beta_psi_gsslope"),
+  reorder_var = NULL,
+  var_spatial = c("beta_psi_gssite", "beta_psi_gsslope", "beta_p_site"),
   plot_hline = FALSE
 )
 }

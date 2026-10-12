@@ -7,7 +7,6 @@
 plot_errorbar(
   dt,
   variable = "var",
-  large_variable_col = "large_variable",
   min = "qmin",
   max = "qmax",
   ggtitle = NULL,
@@ -20,8 +19,6 @@ plot_errorbar(
 
 \item{variable}{column name containing variables (x-axis)}
 
-\item{large_variable_col}{}
-
 \item{min}{column name containing min quantile}
 
 \item{max}{column name containing max quantile}
@@ -31,6 +28,8 @@ plot_errorbar(
 \item{reorder}{reorder the x-axis?}
 
 \item{plot_hline}{plot horizontal line at zero?}
+
+\item{large_variable_col}{}
 }
 \value{
 a ggplot
