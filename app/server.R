@@ -45,7 +45,7 @@ function(input, output, session) {
     return(sph)
   })
 
-  sub_coef <- reactive({
+  sub_psi_coef <- reactive({
     req(input$spe)
     # if statement to avoid issue when changing dataset
     if (input$spe %in% psicoef$species) {
@@ -166,7 +166,7 @@ function(input, output, session) {
   
   ## Other coefs -----
   output$psicoef_plot <- renderPlotly({
-    scoef <- sub_coef()
+    scoef <- sub_psi_coef()
     # scoef <- scoef[nchar(scoef$var) > 4, ]
     lv <- unique(scoef$large_variable)
     
