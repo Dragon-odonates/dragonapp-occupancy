@@ -28,8 +28,6 @@ plot_errorbar(
 \item{reorder}{reorder the x-axis?}
 
 \item{plot_hline}{plot horizontal line at zero?}
-
-\item{large_variable_col}{}
 }
 \value{
 a ggplot

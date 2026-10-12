@@ -42,7 +42,8 @@ Imports:
     data.table,
     ggplot2,
     ggiraph,
-    scales
+    scales,
+    dplyr
 Suggests: 
     devtools,
     testthat (>= 3.0.0)

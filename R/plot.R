@@ -205,7 +205,6 @@ plot_coef <- function(
 #' @param max column name containing max quantile
 #' @param reorder reorder the x-axis?
 #' @param plot_hline plot horizontal line at zero?
-#' @param large_variable_col 
 #' @param ggtitle the plot title
 #'
 #' @returns a ggplot
@@ -220,10 +219,11 @@ plot_errorbar <- function(
     plot_hline = FALSE) {
   
   if (reorder) {
-    setorder(dt, median)
-    set(dt, 
-        j = variable, 
-        value = factor(dt[[variable]], levels = dt[[variable]])
+    data.table::setorder(dt, median)
+    data.table::set(
+      dt, 
+      j = variable, 
+      value = factor(dt[[variable]], levels = dt[[variable]])
     )
   }
   
@@ -269,13 +269,11 @@ plot_errorbar <- function(
 #' Plot coefficients with error bars
 #'
 #' @param dt data.table with coefficients
-#' @param variable column name containing variables (x-axis)
 #' @param min column name containing min quantile
 #' @param max column name containing max quantile
-#' @param reorder reorder the x-axis?
 #' @param plot_hline plot horizontal line at zero?
-#' @param large_variable_col 
 #' @param ggtitle the plot title
+#' @param x the variable to use for the x axis
 #'
 #' @returns a ggplot
 #' @export

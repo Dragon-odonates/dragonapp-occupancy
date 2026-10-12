@@ -16,6 +16,8 @@ plot_errorline(
 \arguments{
 \item{dt}{data.table with coefficients}
 
+\item{x}{the variable to use for the x axis}
+
 \item{min}{column name containing min quantile}
 
 \item{max}{column name containing max quantile}
@@ -23,12 +25,6 @@ plot_errorline(
 \item{ggtitle}{the plot title}
 
 \item{plot_hline}{plot horizontal line at zero?}
-
-\item{variable}{column name containing variables (x-axis)}
-
-\item{reorder}{reorder the x-axis?}
-
-\item{large_variable_col}{}
 }
 \value{
 a ggplot
