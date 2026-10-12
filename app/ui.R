@@ -98,12 +98,12 @@ fluidPage(
                                               ),
                                             fluidRow(
                                               column(12,
-                                                     plotly::plotlyOutput(
+                                                     plotOutput(
                                                        'phenots', # Inferred phenology (variation in detection probability across the year)
                                                        height = "300px"
                                                      )),
                                               column(12,
-                                                     plotly::plotlyOutput(
+                                                     plotOutput(
                                                        'pcoef', # Other coefs for p
                                                        height = "300px"
                                                      ))
@@ -122,12 +122,12 @@ fluidPage(
                                             ),
                                             fluidRow(
                                               column(12,
-                                                     plotly::plotlyOutput(
+                                                     plotOutput(
                                                        'psicoef_plot', # Other coefficients
                                                        height = "450px"
                                                      )),
                                               column(12,
-                                                     plotly::plotlyOutput(
+                                                     plotOutput(
                                                        'bioclim_plot', # Bioclimatic curves
                                                        height = "150px"
                                                      ))

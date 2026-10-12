@@ -109,115 +109,40 @@ function(input, output, session) {
   
   # Detection ---------------------------------------------------------------
   ## Coefficients -----
-  output$pcoef <- renderPlotly({
-    scoef <- sub_p_coef()
-    lv <- unique(scoef$large_variable)
-    
-    if (length(lv) == 1) {
-      res <- plot_ly_scatter(scoef) |> 
-        layout(xaxis = list(title = lv))
-    } else {
-      plist <- vector(mode = "list", length = length(lv))
-      for (i in 1:length(lv)) {
-        pl <- plot_ly_scatter(scoef[scoef$large_variable == lv[i],]) |> 
-          layout(showlegend = FALSE,
-                 xaxis = list(title = lv[i]))
-        plist[[i]] <- pl
-      }
-      res <- plotly::subplot(plist,
-                      titleX = TRUE,
-                      nrows = 2,
-                      margin = 0.08)
-    }
-    return(res)
+  output$pcoef <- renderPlot({
+    gglist <- plot_coef(sub_p_coef(), grid = grid)
+    patchwork::wrap_plots(gglist)
   })
   
   ## Phenology -----
-  output$phenots <- renderPlotly({
-    sph <- sub_ph()
-    sph$x <- as.Date(paste("2000", sph$doy), format = "%Y %j")
-
-    sph$popup <- paste0(
-      "<b>",
-      format(sph$x, "%d %b"),
-      "</b> <br>median: ",
-      sph$median,
-      "<br>CI: [",
-      sph$qmin,
-      ":",
-      sph$qmax,
-      "]"
-    )
-    plot_ly_lines(sph) |> 
-      layout(
-        xaxis = list(
-          title = 'Date',
-          dtick = "M1",
-          tickformat = "%b",
-          ticklabelmode = "period"
-        ),
-        yaxis = list(title = ''),
-        hovermode = "x unified"
-      )
+  output$phenots <- renderPlot({
+    plot_errorline(sub_ph(), x = "x", ggtitle = "Phenology") +
+      scale_x_date(date_labels = "%d %b")
   })
 
 
   # Occupancy ---------------------------------------------------------------
   
-  ## Other coefs -----
-  output$psicoef_plot <- renderPlotly({
-    scoef <- sub_psi_coef()
-    # scoef <- scoef[nchar(scoef$var) > 4, ]
-    lv <- unique(scoef$large_variable)
-    
-    plist <- vector(mode = "list", length = length(lv))
-    for (i in 1:length(lv)) {
-      pl <- plot_ly_scatter(scoef[scoef$large_variable == lv[i],]) |> 
-        layout(showlegend = FALSE,
-               xaxis = list(title = lv[i],
-                            matches = NULL))
-      if (lv[i] %in% c("beta_psi_gsslope", "psi_intercept")) {
-        pl <- pl |> 
-          layout(xaxis = list(showticklabels = FALSE,
-                              title = lv[i],
-                              matches = NULL))
-      }
-      plist[[i]] <- pl
-    }
-    sub1 <- plotly::subplot(plist[1:2],
-                            widths = c(0.2, 0.8),
-                            titleX = TRUE,
-                            nrows = 1,
-                            margin = 0.04)
-    sub2 <- plotly::subplot(plist[3:4],
-                            widths = c(0.5, 0.5),
-                            titleX = TRUE,
-                            nrows = 1,
-                            margin = 0.04)
-    
-    plotly::subplot(sub1, sub2, 
-                    nrows = 2,
-                    titleX = TRUE,
-                    margin = 0.08)
-  })
-  
   ## Bioclim -----
-  output$bioclim_plot <- renderPlotly({
+  output$bioclim_plot <- renderPlot({
+    
     sbio <- sub_bio()
     
-    ubio <- unique(sbio$var)
-    plist <- vector(mode = "list", length = length(ubio))
-    for (i in 1:length(ubio)) {
-      pl <- plot_ly_lines(sbio[sbio$var == ubio[i],]) |> 
-        layout(xaxis = list(title = ubio[i]))
-      plist[[i]] <- pl
+    gglist <- list()
+    for (v in unique(sbio$var)) {
+      sub_bio_sub <- sbio[var == v, ]
+      g <- plot_errorline(sub_bio_sub, x = "x", ggtitle = v)
+      gglist <- c(gglist, g)
     }
-    plotly::subplot(plist,
-                    titleX = TRUE,
-                    nrows = 1,
-                    margin = 0.04)
+    patchwork::wrap_plots(gglist, nrow = 1)
   })
-
+  
+  ## Other coefs -----
+  output$psicoef_plot <- renderPlot({
+    gglist <- plot_coef(sub_psi_coef(), grid = grid)
+    patchwork::wrap_plots(gglist)
+  })
+  
 }
 
 

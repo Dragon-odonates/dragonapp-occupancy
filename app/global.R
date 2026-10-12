@@ -29,17 +29,23 @@ pt <- sf::st_cast(pt, "POLYGON", warn = FALSE)
 pt_df <- readRDS(file.path(folder, "grid_df.rds"))
 pt <- cbind(pt, pt_df[, -1])
 
+grid <- pt |> select(grid_id)
 
 # Pheno -------------------------------------------------------------------
 ph <- read.csv(file.path(folder, "pheno.csv"))
+ph <- data.table::as.data.table(ph)
 
+ph$x <- as.Date(paste("2000", ph$doy), format = "%Y %j")
 
 # Model coefficients ------------------------------------------------------
 psicoef <- read.csv(file.path(folder, "psi_coef.csv"))
+psicoef <- data.table::as.data.table(psicoef)
+
 psibio <- read.csv(file.path(folder, "psi_bioclim_curve.csv"))
+psibio <- data.table::as.data.table(psibio)
 
 pcoef <- read.csv(file.path(folder, "p_coef.csv"))
-
+pcoef <- data.table::as.data.table(pcoef)
 
 # App UI ------------------------------------------------------------------
 

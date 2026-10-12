@@ -50,7 +50,7 @@ sp_files <- list.files(inf_folder, recursive = TRUE, full.names = TRUE)
 pheno_files <- grep("pheno_", sp_files, value = TRUE)
 sp_list <- dirname(pheno_files)
 
-sp_list <- sp_list[1:3]
+# sp_list <- sp_list[1:3]
 sp_list_names <- basename(sp_list)
 
 # Format data -------------------------------------------------------------
@@ -122,8 +122,4 @@ utils::write.csv(p_coef, file.path(dirdata, "p_coef.csv"), row.names = FALSE)
 
 # update the dataset in the shiny app
 # add_shiny_data(data_folder, grid_file, env = env, sc = sc, overwrite = TRUE)
-
-# Run the shiny app locally
-app_path <- here::here("app")
-shiny::runApp(app_path, display.mode = "normal")
 
