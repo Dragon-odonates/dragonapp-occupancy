@@ -154,7 +154,8 @@ plot_coef <- function(
     min = "qmin",
     max = "qmax",
     reorder_var = NULL,
-    var_spatial = c("beta_psi_gssite", "beta_psi_gsslope", "beta_p_site"),
+    var_spatial = c("beta_psi_gssite", "beta_psi_gsslope", "beta_p_site",
+                    "Spatial slope", "Spatial intercept", "Site intercept"),
     plot_hline = FALSE) {
   
   # Initialize empty plot list
