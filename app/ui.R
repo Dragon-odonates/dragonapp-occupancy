@@ -87,30 +87,6 @@ fluidPage(
                                           ),
                                           nav_panel(
                                             title = htmltools::span(
-                                              "Detection coefficients",
-                                              htmltools::tags$div(
-                                                class = "mytooltip",
-                                                icon("circle-info"),
-                                                htmltools::tags$p(class = "mytooltiptext",
-                                                                  "Coefficients affecting species' detection probability")
-                                                
-                                                )
-                                              ),
-                                            fluidRow(
-                                              column(12,
-                                                     plotOutput(
-                                                       'phenots', # Inferred phenology (variation in detection probability across the year)
-                                                       height = "300px"
-                                                     )),
-                                              column(12,
-                                                     plotOutput(
-                                                       'pcoef', # Other coefs for p
-                                                       height = "300px"
-                                                     ))
-                                            )
-                                          ),
-                                          nav_panel(
-                                            title = htmltools::span(
                                               "Occupancy coefficients",
                                               htmltools::tags$div(
                                                 class = "mytooltip",
@@ -122,14 +98,45 @@ fluidPage(
                                             ),
                                             fluidRow(
                                               column(12,
-                                                     plotOutput(
-                                                       'psicoef_plot', # Other coefficients
-                                                       height = "450px"
-                                                     )),
+                                                     shinycssloaders::withSpinner(
+                                                       plotOutput(
+                                                         'psicoef_plot', # Other coefficients
+                                                         height = "450px"
+                                                       ),
+                                                       type = 4
+                                                       )
+                                                     ),
                                               column(12,
                                                      plotOutput(
                                                        'bioclim_plot', # Bioclimatic curves
                                                        height = "150px"
+                                                     ))
+                                            )
+                                          ),
+                                          nav_panel(
+                                            title = htmltools::span(
+                                              "Detection coefficients",
+                                              htmltools::tags$div(
+                                                class = "mytooltip",
+                                                icon("circle-info"),
+                                                htmltools::tags$p(class = "mytooltiptext",
+                                                                  "Coefficients affecting species' detection probability")
+                                                
+                                              )
+                                            ),
+                                            fluidRow(
+                                              column(12,
+                                                     shinycssloaders::withSpinner(
+                                                       plotOutput(
+                                                         'phenots', # Inferred phenology (variation in detection probability across the year)
+                                                         height = "300px"
+                                                       ),
+                                                       type = 4)
+                                                     ),
+                                              column(12,
+                                                     plotOutput(
+                                                       'pcoef', # Other coefs for p
+                                                       height = "300px"
                                                      ))
                                             )
                                           )

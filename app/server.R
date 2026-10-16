@@ -110,7 +110,7 @@ function(input, output, session) {
   # Detection ---------------------------------------------------------------
   ## Coefficients -----
   output$pcoef <- renderPlot({
-    gglist <- plot_coef(sub_p_coef(), grid = grid)
+    gglist <- plot_coef(sub_p_coef(), grid = grid, countries = countries)
     patchwork::wrap_plots(gglist)
   })
   
@@ -139,7 +139,7 @@ function(input, output, session) {
   
   ## Other coefs -----
   output$psicoef_plot <- renderPlot({
-    gglist <- plot_coef(sub_psi_coef(), grid = grid)
+    gglist <- plot_coef(sub_psi_coef(), grid = grid, countries = countries)
     patchwork::wrap_plots(gglist)
   })
   

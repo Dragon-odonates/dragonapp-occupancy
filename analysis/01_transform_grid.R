@@ -20,15 +20,23 @@ eea_grid <- file.path("/home/lnicvert/code/dragonocc/outputs/01_prepare_data/02_
                       sub, scale, visit_sub,
                       "grid.gpkg")
 
+countries <- file.path("/home/lnicvert/code/dragonocc/outputs/01_prepare_data/02_real", 
+                       sub, scale, visit_sub,
+                       "countries.gpkg")
+
 out_folder <- here::here("data")
-output <- file.path(out_folder, "grid.gpkg")
+output_grid <- file.path(out_folder, "grid.gpkg")
+output_countries <- file.path(out_folder, "countries.gpkg")
+
 # ----------------------------------------------
 
 # Load the grid
 grid <- terra::vect(eea_grid)
+countries <- terra::vect(countries)
 
 # Simplify and rename the attributes
 grid <- grid[, "grid_id"]
+countries <- countries[, "admin"]
 
 # Useless with new model
 # # Load the data file
@@ -45,6 +53,8 @@ grid <- grid[, "grid_id"]
 
 # project grid to latlong
 grid_4326 <- terra::project(grid, "EPSG:4326")
+countries_4326 <- terra::project(countries, "EPSG:4326")
 
 # export as grid.gpkg
-terra::writeVector(grid_4326, output, overwrite = TRUE)
+terra::writeVector(grid_4326, output_grid, overwrite = TRUE)
+terra::writeVector(countries_4326, output_countries, overwrite = TRUE)

@@ -10,6 +10,7 @@ suppressPackageStartupMessages({
   require(htmltools)
   require(markdown)
   require(shinycssloaders)
+  require(qs2)
   require(dragonapp.occupancy)
 })
 
@@ -19,33 +20,33 @@ folder <- "data"
 set_theme(theme_minimal())
 
 # Maps data ---------------------------------------------------------------
-df <- read.csv(file.path(folder, "ts_country.csv"))
+df <- qs2::qs_read(file.path(folder, "ts_country.qs"))
 
-pt <- sf::st_read(
+grid <- sf::st_read(
   file.path(folder, "grid.gpkg"),
   quiet = TRUE
 )
-pt <- sf::st_cast(pt, "POLYGON", warn = FALSE)
-pt_df <- readRDS(file.path(folder, "grid_df.rds"))
-pt <- cbind(pt, pt_df[, -1])
+grid <- sf::st_cast(grid, "POLYGON", warn = FALSE)
+pt_df <- qs2::qs_read(file.path(folder, "grid_df.qs"))
+pt <- cbind(grid, pt_df[, -1])
 
-grid <- pt |> select(grid_id)
+
+# Countries ---------------------------------------------------------------
+countries <- sf::st_read(
+  file.path(folder, "countries.gpkg"),
+  quiet = TRUE
+)
+countries <- sf::st_cast(countries, "POLYGON", warn = FALSE)
 
 # Pheno -------------------------------------------------------------------
-ph <- read.csv(file.path(folder, "pheno.csv"))
-ph <- data.table::as.data.table(ph)
-
-ph$x <- as.Date(paste("2000", ph$doy), format = "%Y %j")
+ph <- qs2::qs_read(file.path(folder, "pheno.qs"))
 
 # Model coefficients ------------------------------------------------------
-psicoef <- read.csv(file.path(folder, "psi_coef.csv"))
-psicoef <- data.table::as.data.table(psicoef)
+psicoef <- qs2::qs_read(file.path(folder, "psi_coef.qs"))
 
-psibio <- read.csv(file.path(folder, "psi_bioclim_curve.csv"))
-psibio <- data.table::as.data.table(psibio)
+psibio <- qs2::qs_read(file.path(folder, "psi_bioclim_curve.qs"))
 
-pcoef <- read.csv(file.path(folder, "p_coef.csv"))
-pcoef <- data.table::as.data.table(pcoef)
+pcoef <- qs2::qs_read(file.path(folder, "p_coef.qs"))
 
 # App UI ------------------------------------------------------------------
 
