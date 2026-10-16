@@ -54,7 +54,7 @@ sp_list <- c("Sympetrum danae",
               "Enallagma cyathigerum",
               "Lestes sponsa")
 sp_list <- gsub(" ", "_", sp_list)
-
+sp_list <- c("Aeshna_grandis", "Aeshna_juncea")
 
 # Large variables names ---------------------------------------------------
 psicoef_var <- data.frame(
@@ -103,14 +103,13 @@ sp_list_all <- basename(sp_list_all)
 sp_list <- sp_list[sp_list %in% sp_list_all]
 sp_list <- file.path(inf_folder, sp_list)
 
-sp_list <- sp_list[1:3]
+# sp_list <- sp_list[1:3]
 sp_list_names <- basename(sp_list)
 
 # Format data -------------------------------------------------------------
 ## Mean occupancy and spacial slope ------
 gd <- get_poly_occupancy(grid, sp_list, verbose = verbose)
 
-# saveRDS(data.frame(gd), file.path(dirdata, "grid_df.rds"))
 qs2::qs_save(data.frame(gd), file.path(dirdata, "grid_df.qs"))
 terra::writeVector(
   gd[, "grid_id"],
@@ -119,11 +118,6 @@ terra::writeVector(
 )
 
 ## Calculate the weighted mean per country -----
-# country <- dragon_country()
-# plot(country[, "sov_a3"])
-# 
-# df <- get_ts_country(grid, sp_list, country)
-# utils::write.csv(df, file.path(dirdata, "ts_country.csv"), row.names = FALSE)
 
 country_files <- list.files(precomputed_country_folder)
 country_files <- grep(paste0(sp_list_names, collapse = "|"), country_files, value = TRUE)
@@ -147,7 +141,6 @@ setnames(df2,
 df2 <- df2[!country %in% c("Andorra"), ]
 
 df2 <- as.data.frame(df2)
-# utils::write.csv(df2, file.path(dirdata, "ts_country.csv"), row.names = FALSE)
 qs2::qs_save(df2, file.path(dirdata, "ts_country.qs"))
 
 ## Get phenological data -----
@@ -155,25 +148,10 @@ ph <- get_pheno(sp_list)
 ph$x <- as.Date(paste("2000", ph$doy), format = "%Y %j")
 ph <- data.table::as.data.table(ph)
 
-# utils::write.csv(ph, file.path(dirdata, "pheno.csv"), row.names = FALSE)
 qs2::qs_save(ph, file.path(dirdata, "pheno.qs"))
 
-# Get psi coefficients ---
+## Get psi coefficients -----
 psicoef <- get_coef("psi_coef_", sp_list)
-
-# Get bioclim curve
-# stopifnot("Please provide environment and scaling" = {!is.null(env) | !is.null(scaling)})
-bio <- get_bioclim_seq(env)
-bioclim_df <- get_bioclim_curve(bio, psi_coef = psicoef, scaling = sc)
-bioclim_df <- data.table::as.data.table(bioclim_df)
-
-# Rename variables
-bioclim_df <- psibio_var[bioclim_df, on = c("old" = "var")]
-bioclim_df[is.na(new), new := old]
-bioclim_df[, old := NULL]
-setnames(bioclim_df,
-         old = "new",
-         new = "var")
 
 # Remove bioclim coefficients from psicoef
 rm_var <- c("beta_psi_bioclim", "beta_psi_bioclim_sq")
@@ -192,9 +170,22 @@ setnames(psicoef,
          new = "large_variable")
 psicoef[, large_variable := factor(large_variable)]
 
-# utils::write.csv(psicoef, file.path(dirdata, "psi_coef.csv"), row.names = FALSE)
-# utils::write.csv(bioclim_df, file.path(dirdata, "psi_bioclim_curve.csv"), row.names = FALSE)
 qs2::qs_save(psicoef, file.path(dirdata, "psi_coef.qs"))
+
+## Get bioclim curve -----
+bioclim_filename <- paste0("bioclim_", basename(sp_list[1]), ".qs")
+bioclim <- qs2::qs_read(file.path(sp_list[1], bioclim_filename))
+
+bioclim_df <- get_bioclim(sp_list)
+
+# Rename variables
+bioclim_df <- psibio_var[bioclim_df, on = c("old" = "var")]
+bioclim_df[is.na(new), new := old]
+bioclim_df[, old := NULL]
+setnames(bioclim_df,
+         old = "new",
+         new = "var")
+
 qs2::qs_save(bioclim_df, file.path(dirdata, "psi_bioclim_curve.qs"))
 
 # Get p coefficients ---
@@ -211,9 +202,5 @@ setnames(pcoef,
          new = "large_variable")
 pcoef[, large_variable := factor(large_variable)]
 
-# utils::write.csv(pcoef, file.path(dirdata, "p_coef.csv"), row.names = FALSE)
 qs2::qs_save(pcoef, file.path(dirdata, "p_coef.qs"))
-
-# update the dataset in the shiny app
-# add_shiny_data(data_folder, grid_file, env = env, sc = sc, overwrite = TRUE)
 
