@@ -8,6 +8,7 @@ plot_spatial(
   dt,
   grid,
   variable = "var",
+  countries = NULL,
   ggtitle = NULL,
   range = NULL,
   legend_title = NULL,
@@ -20,6 +21,8 @@ plot_spatial(
 \item{grid}{a grid (must have column grid_id)}
 
 \item{variable}{Name of the variable column containing \code{grid_id} (in the \code{grid})}
+
+\item{countries}{Countries polygons}
 
 \item{ggtitle}{the plot title}
 

@@ -143,6 +143,7 @@ plot_trend <- function(dat_psi) {
 #' @param reorder_var variables that should be reordered along the x-axis
 #' @param var_spatial large variables that have spatial values (to be displayed as map)
 #' @param plot_hline plot horizontal line at zero?
+#' @param countries Countries polygons
 #'
 #' @returns a list of ggplot
 #' @export
@@ -154,6 +155,7 @@ plot_coef <- function(
     min = "qmin",
     max = "qmax",
     reorder_var = NULL,
+    countries = NULL,
     var_spatial = c("beta_psi_gssite", "beta_psi_gsslope", "beta_p_site",
                     "Spatial slope", "Spatial intercept", "Site intercept"),
     plot_hline = FALSE) {
@@ -172,6 +174,7 @@ plot_coef <- function(
         dt = df_sub, 
         variable = variable,
         grid = grid,
+        countries = countries,
         ggtitle = lv)
     } else {
       if (lv %in% reorder_var) {
@@ -318,6 +321,7 @@ plot_errorline <- function(
 #' @param na_color color for NA grid values
 #' @param ggtitle the plot title
 #' @param variable Name of the variable column containing `grid_id` (in the `grid`)
+#' @param countries Countries polygons
 #'
 #' @returns a ggplot
 #' @export
@@ -325,6 +329,7 @@ plot_spatial <- function(
     dt, 
     grid,
     variable = "var",
+    countries = NULL,
     ggtitle = NULL,
     range = NULL,
     legend_title = NULL,
@@ -351,6 +356,11 @@ plot_spatial <- function(
       na.value = na_color,
       midpoint = 0) +
     ggtitle(ggtitle)
+  
+  if (!is.null(countries)) { # Add countries lines
+    g <- g +
+      geom_sf(data = countries, color = "darkgrey")
+  }
   return(g)
 }
 

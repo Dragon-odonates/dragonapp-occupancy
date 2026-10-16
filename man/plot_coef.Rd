@@ -12,6 +12,7 @@ plot_coef(
   min = "qmin",
   max = "qmax",
   reorder_var = NULL,
+  countries = NULL,
   var_spatial = c("beta_psi_gssite", "beta_psi_gsslope", "beta_p_site", "Spatial slope",
     "Spatial intercept", "Site intercept"),
   plot_hline = FALSE
@@ -31,6 +32,8 @@ plot_coef(
 \item{max}{column name containing max quantile}
 
 \item{reorder_var}{variables that should be reordered along the x-axis}
+
+\item{countries}{Countries polygons}
 
 \item{var_spatial}{large variables that have spatial values (to be displayed as map)}
 
